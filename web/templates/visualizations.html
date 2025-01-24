@@ -1,0 +1,35 @@
+<!-- templates/visualizations.html -->
+{% extends "base.html" %}
+
+{% block title %}Visualisasi Pohon Keputusan{% endblock %}
+
+{% block content %}
+<h2>Visualisasi Pohon Keputusan</h2>
+
+{% if error %}
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if message %}
+  <div class="alert alert-info" role="alert">
+    {{ message }}
+  </div>
+{% endif %}
+
+{% if image_urls %}
+  <div class="row">
+    {% for url in image_urls %}
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <img src="{{ url }}" class="card-img-top" alt="Tree Visualization">
+          <div class="card-body">
+            <p class="card-text">Visualisasi Pohon Keputusan</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

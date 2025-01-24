@@ -1,0 +1,328 @@
+/* static/css/styles.css */
+
+/* Reset Margin and Padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Wrapper Styles */
+#wrapper {
+    display: flex;
+    align-items: stretch;
+    transition: all 0.3s ease;
+}
+
+/* Sidebar Styles */
+#sidebar-wrapper {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transform: translateX(-250px);
+}
+
+/* Sidebar Toggled */
+#wrapper.toggled #sidebar-wrapper {
+    transform: translateX(0);
+}
+
+/* Sidebar Heading */
+.sidebar-heading {
+    padding: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    background-color: #1a252f;
+    border-bottom: 1px solid #34495e;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-heading:hover {
+    background-color: #34495e;
+}
+
+/* Sidebar Navigation Links */
+.list-group-item {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    border: none;
+    padding: 15px 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.list-group-item:hover, .list-group-item.active {
+    background-color: #2980b9;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Scrollbar Styling for Sidebar */
+#sidebar-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+#sidebar-wrapper::-webkit-scrollbar-thumb {
+    background-color: #34495e;
+    border-radius: 4px;
+}
+
+#sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #2980b9;
+}
+
+/* Page Content Styles */
+#page-content-wrapper {
+    width: 100%;
+    padding: 20px;
+    transition: all 0.3s ease;
+    margin-left: 0;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 250px;
+}
+
+/* Navbar Toggle Button */
+#menu-toggle {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#menu-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #3498db;
+    border-color: #3498db;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-success:hover {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+    transform: translateY(-2px);
+}
+
+.btn-info {
+    background-color: #16a085;
+    border-color: #16a085;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-info:hover {
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+    transform: translateY(-2px);
+}
+
+.btn-warning {
+    background-color: #f39c12;
+    border-color: #f39c12;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-warning:hover {
+    background-color: #f1c40f;
+    border-color: #f1c40f;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #7f8c8d;
+    border-color: #7f8c8d;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #95a5a6;
+    border-color: #95a5a6;
+    transform: translateY(-2px);
+}
+
+.btn-dark {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-dark:hover {
+    background-color: #34495e;
+    border-color: #34495e;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #c0392b;
+    border-color: #c0392b;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    transform: translateY(-2px);
+}
+
+/* Form Styles */
+.form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-control {
+    border-radius: 0.25rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 8px rgba(41, 128, 185, 0.5);
+}
+
+/* Table Styles */
+.table {
+    background-color: #fff;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.table:hover {
+    transform: scale(1.01);
+}
+
+.table thead th {
+    background-color: #2980b9;
+    color: #fff;
+    border-bottom: 2px solid #3498db;
+}
+
+.table tbody tr:hover {
+    background-color: #ecf0f1;
+    transition: background-color 0.2s ease;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.card-img-top {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+/* Preformatted Text Styles */
+pre {
+    background-color: #ecf0f1;
+    padding: 15px;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    transition: background-color 0.3s;
+}
+
+pre:hover {
+    background-color: #bdc3c7;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 0.5rem;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.alert-info:hover {
+    background-color: #c8e6ef;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-success:hover {
+    background-color: #c1eac9;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-danger:hover {
+    background-color: #f1b0b7;
+}
+
+/* Jumbotron Styles */
+.jumbotron {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.jumbotron:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -250px;
+    }
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+    #page-content-wrapper {
+        margin-left: 0;
+    }
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 250px;
+    }
+}

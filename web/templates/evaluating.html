@@ -1,0 +1,78 @@
+<!-- templates/evaluating.html -->
+{% extends "base.html" %}
+
+{% block title %}Evaluasi Model{% endblock %}
+
+{% block content %}
+<h2>Evaluasi Model</h2>
+
+{% if error %}
+  <div class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if evaluation %}
+  <h4>Laporan Klasifikasi</h4>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>Kelas</th>
+          <th>Precision</th>
+          <th>Recall</th>
+          <th>F1-Score</th>
+          <th>Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for class, metrics in evaluation.items() %}
+          {% if class != 'accuracy' and class != 'macro avg' and class != 'weighted avg' %}
+            <tr>
+              <td>{{ class }}</td>
+              <td>{{ "%.2f"|format(metrics.precision) }}</td>
+              <td>{{ "%.2f"|format(metrics.recall) }}</td>
+              <td>{{ "%.2f"|format(metrics.f1-score) }}</td>
+              <td>{{ metrics.support }}</td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+        <tr>
+          <th>Accuracy</th>
+          <td colspan="4">{{ "%.2f"|format(evaluation.accuracy) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Matriks Kebingungan</h4>
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th></th>
+          {% for class in evaluation.keys() %}
+            {% if class != 'accuracy' and class != 'macro avg' and class != 'weighted avg' %}
+              <th>{{ class }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for actual_class in evaluation.keys() %}
+          {% if actual_class != 'accuracy' and actual_class != 'macro avg' and actual_class != 'weighted avg' %}
+            <tr>
+              <th>{{ actual_class }}</th>
+              {% for predicted_class in evaluation.keys() %}
+                {% if predicted_class != 'accuracy' and predicted_class != 'macro avg' and predicted_class != 'weighted avg' %}
+                  <td>{{ confusion_matrix[loop.index0][loop.index0] }}</td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

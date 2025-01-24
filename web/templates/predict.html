@@ -1,0 +1,47 @@
+<!-- templates/predict.html -->
+{% extends "base.html" %}
+
+{% block title %}Prediksi{% endblock %}
+
+{% block content %}
+<h2>Prediksi Prestasi Siswa</h2>
+
+<form method="POST">
+  <div class="form-row">
+    {% for feature in ['PAI', 'PKn', 'BIN', 'MTK', 'SEI', 'BIG', 'SEB', 'PJOK', 'PRA', 'GEO', 'SEJ', 'Sos', 'Eko', 'AA', 'TIK', 'BDS'] %}
+      <div class="form-group col-md-3">
+        <label for="{{ feature }}">{{ feature }}</label>
+        <select class="form-control" id="{{ feature }}" name="{{ feature }}" required>
+          <option value="" selected disabled>Pilih Kategori</option>
+          <option value="Sangat Buruk">Sangat Buruk</option>
+          <option value="Buruk">Buruk</option>
+          <option value="Cukup">Cukup</option>
+          <option value="Baik">Baik</option>
+          <option value="Sangat Baik">Sangat Baik</option>
+        </select>
+      </div>
+    {% endfor %}
+  </div>
+  <button type="submit" class="btn btn-primary">Prediksi</button>
+</form>
+
+{% if error %}
+  <div class="alert alert-danger mt-3" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
+{% if predicted_class %}
+  <div class="alert alert-success mt-3" role="alert">
+    <h4 class="alert-heading">Hasil Prediksi</h4>
+    <p>Kelas Prediksi: <strong>{{ predicted_class }}</strong></p>
+    <hr>
+    <p class="mb-0">Votes:</p>
+    <ul>
+      {% for class, vote in votes.items() %}
+        <li>{{ class }}: {{ vote }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,665 @@
+Rules for Tree 1:
+|--- BIG = Sangat Buruk <= 3.50
+|   |--- TIK = Sangat Buruk <= 0.50
+|   |   |--- BDS = Sangat Buruk <= 2.50
+|   |   |   |--- BIG = Sangat Buruk <= 1.50
+|   |   |   |   |--- MTK = Sangat Buruk <= 1.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- MTK = Sangat Buruk >  1.50
+|   |   |   |   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |   |--- BIN = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |   |   |--- BIN = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- AA = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- AA = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |--- BIG = Sangat Buruk >  1.50
+|   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- MTK = Sangat Buruk <= 3.50
+|   |   |   |   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- MTK = Sangat Buruk >  3.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |--- BDS = Sangat Buruk >  2.50
+|   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |--- AA = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- AA = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |--- class: 2.0
+|   |--- TIK = Sangat Buruk >  0.50
+|   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |--- class: 0.0
+|   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |--- GEO = Sangat Buruk <= 3.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- GEO = Sangat Buruk >  3.50
+|   |   |   |   |   |   |--- class: 2.0
+|   |   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |   |--- TIK = Sangat Buruk <= 1.50
+|   |   |   |   |   |--- class: 2.0
+|   |   |   |   |--- TIK = Sangat Buruk >  1.50
+|   |   |   |   |   |--- class: 1.0
+|--- BIG = Sangat Buruk >  3.50
+|   |--- PJOK = Sangat Buruk <= 0.50
+|   |   |--- SEI = Sangat Buruk <= 0.50
+|   |   |   |--- class: 0.0
+|   |   |--- SEI = Sangat Buruk >  0.50
+|   |   |   |--- PRA = Sangat Buruk <= 1.50
+|   |   |   |   |--- class: 2.0
+|   |   |   |--- PRA = Sangat Buruk >  1.50
+|   |   |   |   |--- SEJ = Sangat Buruk <= 3.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEJ = Sangat Buruk >  3.50
+|   |   |   |   |   |--- class: 2.0
+|   |--- PJOK = Sangat Buruk >  0.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 2:
+|--- PKn = Sangat Buruk <= 2.50
+|   |--- Eko = Sangat Buruk <= 0.50
+|   |   |--- SEB = Sangat Buruk <= 1.50
+|   |   |   |--- class: 0.0
+|   |   |--- SEB = Sangat Buruk >  1.50
+|   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |--- BIN = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- BIN = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |--- Eko = Sangat Buruk >  0.50
+|   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |--- Eko = Sangat Buruk <= 3.50
+|   |   |   |   |--- BIG = Sangat Buruk <= 1.50
+|   |   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- BIG = Sangat Buruk >  1.50
+|   |   |   |   |   |--- TIK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- TIK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |--- Eko = Sangat Buruk >  3.50
+|   |   |   |   |--- class: 2.0
+|   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |--- PKn = Sangat Buruk <= 1.50
+|   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |--- PKn = Sangat Buruk >  1.50
+|   |   |   |   |--- class: 0.0
+|--- PKn = Sangat Buruk >  2.50
+|   |--- class: 2.0
+
+==================================================
+Rules for Tree 3:
+|--- Eko = Sangat Buruk <= 3.50
+|   |--- MTK = Sangat Buruk <= 1.00
+|   |   |--- BIG = Sangat Buruk <= 1.50
+|   |   |   |--- class: 0.0
+|   |   |--- BIG = Sangat Buruk >  1.50
+|   |   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |   |--- PAI = Sangat Buruk <= 1.50
+|   |   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PAI = Sangat Buruk >  1.50
+|   |   |   |   |   |--- class: 0.0
+|   |--- MTK = Sangat Buruk >  1.00
+|   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |--- AA = Sangat Buruk <= 3.50
+|   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |--- AA = Sangat Buruk >  3.50
+|   |   |   |   |--- class: 1.0
+|   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |--- BIG = Sangat Buruk <= 2.50
+|   |   |   |   |--- BIN = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- TIK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- TIK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- BIN = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- BIG = Sangat Buruk >  2.50
+|   |   |   |   |--- PKn = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- PKn = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 2.0
+|--- Eko = Sangat Buruk >  3.50
+|   |--- BIN = Sangat Buruk <= 0.50
+|   |   |--- PJOK = Sangat Buruk <= 2.50
+|   |   |   |--- GEO = Sangat Buruk <= 2.50
+|   |   |   |   |--- class: 1.0
+|   |   |   |--- GEO = Sangat Buruk >  2.50
+|   |   |   |   |--- class: 2.0
+|   |   |--- PJOK = Sangat Buruk >  2.50
+|   |   |   |--- class: 2.0
+|   |--- BIN = Sangat Buruk >  0.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 4:
+|--- BIN = Sangat Buruk <= 3.50
+|   |--- SEB = Sangat Buruk <= 3.50
+|   |   |--- PJOK = Sangat Buruk <= 1.50
+|   |   |   |--- BIN = Sangat Buruk <= 0.50
+|   |   |   |   |--- GEO = Sangat Buruk <= 4.00
+|   |   |   |   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk <= 1.50
+|   |   |   |   |   |   |   |   |--- Sos = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |   |--- Sos = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk >  1.50
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- GEO = Sangat Buruk >  4.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |--- BIN = Sangat Buruk >  0.50
+|   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 2.0
+|   |   |   |   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |--- PJOK = Sangat Buruk >  1.50
+|   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |--- PJOK = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- PAI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- Sos = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- Sos = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- PAI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PJOK = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|   |--- SEB = Sangat Buruk >  3.50
+|   |   |--- AA = Sangat Buruk <= 0.50
+|   |   |   |--- Eko = Sangat Buruk <= 1.50
+|   |   |   |   |--- class: 1.0
+|   |   |   |--- Eko = Sangat Buruk >  1.50
+|   |   |   |   |--- class: 2.0
+|   |   |--- AA = Sangat Buruk >  0.50
+|   |   |   |--- class: 2.0
+|--- BIN = Sangat Buruk >  3.50
+|   |--- PAI = Sangat Buruk <= 2.50
+|   |   |--- class: 1.0
+|   |--- PAI = Sangat Buruk >  2.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 5:
+|--- BDS = Sangat Buruk <= 2.50
+|   |--- SEJ = Sangat Buruk <= 1.50
+|   |   |--- class: 0.0
+|   |--- SEJ = Sangat Buruk >  1.50
+|   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |--- BIN = Sangat Buruk <= 3.50
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- BIN = Sangat Buruk >  3.50
+|   |   |   |   |--- class: 2.0
+|   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |--- AA = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- AA = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |--- Sos = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- AA = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- AA = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- Sos = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|--- BDS = Sangat Buruk >  2.50
+|   |--- PAI = Sangat Buruk <= 1.50
+|   |   |--- Eko = Sangat Buruk <= 2.00
+|   |   |   |--- class: 0.0
+|   |   |--- Eko = Sangat Buruk >  2.00
+|   |   |   |--- class: 2.0
+|   |--- PAI = Sangat Buruk >  1.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 6:
+|--- BDS = Sangat Buruk <= 2.50
+|   |--- PJOK = Sangat Buruk <= 1.50
+|   |   |--- MTK = Sangat Buruk <= 3.00
+|   |   |   |--- TIK = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- TIK = Sangat Buruk >  1.00
+|   |   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |--- MTK = Sangat Buruk >  3.00
+|   |   |   |--- class: 2.0
+|   |--- PJOK = Sangat Buruk >  1.50
+|   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- SEJ = Sangat Buruk <= 2.50
+|   |   |   |   |   |   |--- BIN = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- BIN = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- SEJ = Sangat Buruk >  2.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |--- SEB = Sangat Buruk <= 0.50
+|   |   |   |   |--- BDS = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 2.0
+|   |   |   |   |--- BDS = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- SEB = Sangat Buruk >  0.50
+|   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|--- BDS = Sangat Buruk >  2.50
+|   |--- SEJ = Sangat Buruk <= 3.00
+|   |   |--- Sos = Sangat Buruk <= 3.00
+|   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |--- Eko = Sangat Buruk <= 2.00
+|   |   |   |   |   |--- BIN = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- BIN = Sangat Buruk >  0.50
+|   |   |   |   |   |   |--- class: 2.0
+|   |   |   |   |--- Eko = Sangat Buruk >  2.00
+|   |   |   |   |   |--- class: 2.0
+|   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |--- class: 1.0
+|   |   |--- Sos = Sangat Buruk >  3.00
+|   |   |   |--- class: 2.0
+|   |--- SEJ = Sangat Buruk >  3.00
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 7:
+|--- PKn = Sangat Buruk <= 2.50
+|   |--- SEJ = Sangat Buruk <= 0.50
+|   |   |--- BIN = Sangat Buruk <= 1.00
+|   |   |   |--- class: 0.0
+|   |   |--- BIN = Sangat Buruk >  1.00
+|   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |--- class: 1.0
+|   |--- SEJ = Sangat Buruk >  0.50
+|   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |--- SEI = Sangat Buruk <= 3.50
+|   |   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |--- SEI = Sangat Buruk >  3.50
+|   |   |   |   |--- class: 1.0
+|   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |--- PRA = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- Sos = Sangat Buruk <= 3.50
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.50
+|   |   |   |   |   |   |   |--- class: 2.0
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk >  1.50
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- Sos = Sangat Buruk >  3.50
+|   |   |   |   |   |   |--- class: 2.0
+|   |   |   |   |--- PRA = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|--- PKn = Sangat Buruk >  2.50
+|   |--- class: 2.0
+
+==================================================
+Rules for Tree 8:
+|--- PRA = Sangat Buruk <= 3.50
+|   |--- MTK = Sangat Buruk <= 1.50
+|   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |--- BIG = Sangat Buruk <= 3.50
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- BIG = Sangat Buruk >  3.50
+|   |   |   |   |--- class: 2.0
+|   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |--- PAI = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PAI = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|   |--- MTK = Sangat Buruk >  1.50
+|   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |--- Eko = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- Eko = Sangat Buruk >  1.00
+|   |   |   |   |--- BDS = Sangat Buruk <= 0.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BDS = Sangat Buruk >  0.50
+|   |   |   |   |   |--- class: 1.0
+|   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |--- SEJ = Sangat Buruk <= 2.50
+|   |   |   |   |--- PRA = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PRA = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- SEJ = Sangat Buruk >  2.50
+|   |   |   |   |--- SEJ = Sangat Buruk <= 3.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEJ = Sangat Buruk >  3.50
+|   |   |   |   |   |--- class: 2.0
+|--- PRA = Sangat Buruk >  3.50
+|   |--- AA = Sangat Buruk <= 0.50
+|   |   |--- BIN = Sangat Buruk <= 0.50
+|   |   |   |--- class: 0.0
+|   |   |--- BIN = Sangat Buruk >  0.50
+|   |   |   |--- class: 2.0
+|   |--- AA = Sangat Buruk >  0.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 9:
+|--- Eko = Sangat Buruk <= 0.50
+|   |--- BIG = Sangat Buruk <= 3.50
+|   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |--- class: 0.0
+|   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- PJOK = Sangat Buruk <= 2.50
+|   |   |   |   |   |   |--- BIN = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- BIN = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- PJOK = Sangat Buruk >  2.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |--- BIG = Sangat Buruk >  3.50
+|   |   |--- PKn = Sangat Buruk <= 0.50
+|   |   |   |--- class: 0.0
+|   |   |--- PKn = Sangat Buruk >  0.50
+|   |   |   |--- class: 2.0
+|--- Eko = Sangat Buruk >  0.50
+|   |--- BDS = Sangat Buruk <= 2.50
+|   |   |--- BDS = Sangat Buruk <= 1.50
+|   |   |   |--- PAI = Sangat Buruk <= 2.50
+|   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- TIK = Sangat Buruk <= 2.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- TIK = Sangat Buruk >  2.50
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |--- PAI = Sangat Buruk >  2.50
+|   |   |   |   |--- SEJ = Sangat Buruk <= 3.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEJ = Sangat Buruk >  3.00
+|   |   |   |   |   |--- class: 2.0
+|   |   |--- BDS = Sangat Buruk >  1.50
+|   |   |   |--- class: 0.0
+|   |--- BDS = Sangat Buruk >  2.50
+|   |   |--- MTK = Sangat Buruk <= 3.00
+|   |   |   |--- SEI = Sangat Buruk <= 3.00
+|   |   |   |   |--- class: 2.0
+|   |   |   |--- SEI = Sangat Buruk >  3.00
+|   |   |   |   |--- PRA = Sangat Buruk <= 3.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PRA = Sangat Buruk >  3.00
+|   |   |   |   |   |--- class: 2.0
+|   |   |--- MTK = Sangat Buruk >  3.00
+|   |   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 10:
+|--- Eko = Sangat Buruk <= 0.50
+|   |--- BIG = Sangat Buruk <= 3.50
+|   |   |--- BIG = Sangat Buruk <= 1.50
+|   |   |   |--- class: 0.0
+|   |   |--- BIG = Sangat Buruk >  1.50
+|   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- SEB = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEB = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |--- BIG = Sangat Buruk >  3.50
+|   |   |--- PJOK = Sangat Buruk <= 0.50
+|   |   |   |--- class: 2.0
+|   |   |--- PJOK = Sangat Buruk >  0.50
+|   |   |   |--- class: 0.0
+|--- Eko = Sangat Buruk >  0.50
+|   |--- BDS = Sangat Buruk <= 2.50
+|   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |--- TIK = Sangat Buruk <= 1.00
+|   |   |   |   |--- class: 0.0
+|   |   |   |--- TIK = Sangat Buruk >  1.00
+|   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |--- PKn = Sangat Buruk <= 1.50
+|   |   |   |   |--- TIK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- PRA = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |--- PRA = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- BIG = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |   |--- BIG = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- TIK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |--- PKn = Sangat Buruk >  1.50
+|   |   |   |   |--- MTK = Sangat Buruk <= 3.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- MTK = Sangat Buruk >  3.50
+|   |   |   |   |   |--- class: 2.0
+|   |--- BDS = Sangat Buruk >  2.50
+|   |   |--- class: 2.0
+
+==================================================
+Rules for Tree 11:
+|--- BDS = Sangat Buruk <= 2.50
+|   |--- Eko = Sangat Buruk <= 1.00
+|   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |--- class: 0.0
+|   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |--- SEI = Sangat Buruk <= 2.50
+|   |   |   |   |--- PKn = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- PAI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- PAI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- PJOK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |--- PJOK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- PKn = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |--- SEI = Sangat Buruk >  2.50
+|   |   |   |   |--- class: 0.0
+|   |--- Eko = Sangat Buruk >  1.00
+|   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |--- class: 0.0
+|   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |--- BIN = Sangat Buruk <= 2.50
+|   |   |   |   |--- SEJ = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- SEI = Sangat Buruk <= 1.00
+|   |   |   |   |   |   |--- class: 0.0
+|   |   |   |   |   |--- SEI = Sangat Buruk >  1.00
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |--- SEJ = Sangat Buruk >  1.00
+|   |   |   |   |   |--- class: 1.0
+|   |   |   |--- BIN = Sangat Buruk >  2.50
+|   |   |   |   |--- PKn = Sangat Buruk <= 2.50
+|   |   |   |   |   |--- class: 0.0
+|   |   |   |   |--- PKn = Sangat Buruk >  2.50
+|   |   |   |   |   |--- class: 2.0
+|--- BDS = Sangat Buruk >  2.50
+|   |--- PAI = Sangat Buruk <= 3.00
+|   |   |--- GEO = Sangat Buruk <= 1.00
+|   |   |   |--- BIN = Sangat Buruk <= 0.50
+|   |   |   |   |--- class: 1.0
+|   |   |   |--- BIN = Sangat Buruk >  0.50
+|   |   |   |   |--- MTK = Sangat Buruk <= 1.00
+|   |   |   |   |   |--- class: 2.0
+|   |   |   |   |--- MTK = Sangat Buruk >  1.00
+|   |   |   |   |   |--- Eko = Sangat Buruk <= 1.50
+|   |   |   |   |   |   |--- class: 1.0
+|   |   |   |   |   |--- Eko = Sangat Buruk >  1.50
+|   |   |   |   |   |   |--- class: 2.0
+|   |   |--- GEO = Sangat Buruk >  1.00
+|   |   |   |--- class: 2.0
+|   |--- PAI = Sangat Buruk >  3.00
+|   |   |--- class: 2.0
+
+==================================================
