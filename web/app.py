@@ -11,7 +11,9 @@ import joblib
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 import json
+import plotly.graph_objects as go
 
+import plotly
 app = Flask(__name__)
 
 # Direktori untuk menyimpan model dan visualisasi
@@ -452,7 +454,140 @@ def predict():
     except Exception as e:
         return jsonify({"error": f"Error during prediction: {str(e)}"}), 500
 
-# Routing Web
+
+@app.route('/data_uji', methods=['GET'])
+def data_uji():
+    """
+    Mengembalikan data uji dalam format JSON.
+    """
+    file_path = os.path.join(DATA_DIR, 'data_uji.xlsx')
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Data uji belum diunggah."}), 400
+    try:
+        data = pd.read_excel(file_path)
+        data_preview = data.to_dict(orient='records')
+        return jsonify({"data_uji": data_preview}), 200
+    except Exception as e:
+        return jsonify({"error": f"Failed to read data uji: {str(e)}"}), 500
+
+
+@app.route('/web/predict_data_uji', methods=['GET'])
+def web_predict_data_uji():
+    """
+    Menampilkan halaman web yang berisi hasil prediksi data uji
+    serta jumlah siswa berprestasi, cukup berprestasi, dan tidak berprestasi
+    dalam bentuk card dan grafik.
+    """
+    file_path = os.path.join(DATA_DIR, 'data_uji.xlsx')
+    rules_json_filename = os.path.join(TREE_VIS_DIR, 'rules.json')
+
+    if not os.path.exists(file_path):
+        return render_template('predict_data_uji.html', error="Data uji belum diunggah.")
+
+    if not os.path.exists(rules_json_filename):
+        return render_template('predict_data_uji.html', error="Rules tidak ditemukan. Silakan latih model terlebih dahulu.")
+
+    try:
+        # Membaca data uji
+        data = pd.read_excel(file_path)
+        if data.empty:
+            return render_template('predict_data_uji.html', error="Data uji kosong.")
+
+        def label_nilai(value):
+            """Mengonversi nilai numerik menjadi kategori label."""
+            if value <= 40:
+                return "Sangat Buruk"
+            elif 40 < value <= 55:
+                return "Buruk"
+            elif 55 < value <= 75:
+                return "Cukup"
+            elif 76 < value <= 85:
+                return "Baik"
+            else:
+                return "Sangat Baik"
+
+        # Simpan data mentah sebelum diubah ke label
+        data_raw = data.copy()
+
+        # Melabeli data numerik menjadi kategori
+        data_labeled = data.copy()
+        numeric_columns = data_labeled.select_dtypes(include=['number']).columns
+        for col in numeric_columns:
+            data_labeled[col] = data_labeled[col].apply(label_nilai)
+
+        # Memuat aturan
+        with open(rules_json_filename, 'r') as f:
+            rules = json.load(f)
+
+        predictions = []
+        counts = {"Berprestasi": 0, "Cukup Berprestasi": 0, "Tidak Berprestasi": 0}
+
+        # Proses prediksi
+        for index, row in data_labeled.iterrows():
+            raw_data = data_raw.iloc[index].to_dict()  # Menyimpan nilai mentah
+            normalized_input = {str(k).strip().lower(): str(v).strip().lower() for k, v in row.items()}
+            votes = {}
+            matched_rules = 0
+
+            for rule in rules:
+                conditions = rule['conditions']
+                class_name = rule['class']
+                match = True
+
+                for condition in conditions:
+                    if " = " in condition:
+                        feature, _, value = condition.partition(" = ")
+                        feature = feature.strip().lower()
+                        value = value.strip('"').lower()
+                        if feature not in normalized_input or normalized_input[feature] != value:
+                            match = False
+                            break
+                    elif " != " in condition:
+                        feature, _, value = condition.partition(" != ")
+                        feature = feature.strip().lower()
+                        value = value.strip('"').lower()
+                        if feature not in normalized_input or normalized_input[feature] == value:
+                            match = False
+                            break
+
+                if match:
+                    votes[class_name] = votes.get(class_name, 0) + 1
+                    matched_rules += 1
+
+            predicted_class = max(votes, key=votes.get) if votes else "Tidak Berprestasi"
+            predictions.append({
+                "index": index + 1,
+                "data_raw": raw_data,  # Nilai mentah ditambahkan ke hasil prediksi
+                "data_labeled": row.to_dict(),
+                "predicted_class": predicted_class,
+                "votes": votes,
+                "matched_rules": matched_rules
+            })
+
+            # Hitung kategori prediksi
+            if predicted_class == "Berprestasi":
+                counts["Berprestasi"] += 1
+            elif predicted_class == "Cukup Berprestasi":
+                counts["Cukup Berprestasi"] += 1
+            elif predicted_class == "Tidak Berprestasi":
+                counts["Tidak Berprestasi"] += 1
+
+        # Membuat grafik dengan Plotly
+        fig = go.Figure(data=[
+            go.Bar(
+                x=list(counts.keys()),
+                y=list(counts.values()),
+                marker_color=["#007bff", "#ffc107", "#dc3545"]
+            )
+        ])
+        fig.update_layout(title="Distribusi Prediksi Prestasi Siswa", xaxis_title="Kategori", yaxis_title="Jumlah Siswa")
+
+        graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return render_template('predict_data_uji.html', predictions=predictions, counts=counts, graph_json=graph_json)
+
+    except Exception as e:
+        return render_template('predict_data_uji.html', error=f"Error saat memproses prediksi: {str(e)}")
 
 @app.route('/web')
 def web_index():

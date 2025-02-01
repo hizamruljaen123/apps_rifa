@@ -326,3 +326,16 @@ pre:hover {
         margin-left: 250px;
     }
 }
+ul {
+    list-style-type: none; /* Menghilangkan bullet default */
+    padding: 0; /* Menghilangkan padding */
+    margin: 0; /* Menghilangkan margin */
+}
+
+ul li {
+    margin-bottom: 5px; /* Memberikan jarak antar item */
+    font-size: 14px; /* Ukuran font lebih kecil */
+    line-height: 1.5; /* Memberikan ruang antar baris */
+    border-left: 4px solid #007bff; /* Menambahkan garis warna untuk estetika */
+    padding-left: 10px; /* Memberikan padding untuk isi teks */
+}

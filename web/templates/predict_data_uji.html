@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Prediksi Data Uji{% endblock %}
+
+{% block content %}
+<h2>Hasil Prediksi Data Uji</h2>
+
+{% if error %}
+  <div class="alert alert-danger mt-3" role="alert">
+    {{ error }}
+  </div>
+{% endif %}
+
+<!-- Card Section -->
+<div class="row mt-3">
+  <div class="col-md-4">
+    <div class="card text-white bg-primary mb-3">
+      <div class="card-header">Berprestasi</div>
+      <div class="card-body">
+        <h5 class="card-title">{{ counts["Berprestasi"] }}</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-warning mb-3">
+      <div class="card-header">Cukup Berprestasi</div>
+      <div class="card-body">
+        <h5 class="card-title">{{ counts["Cukup Berprestasi"] }}</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-danger mb-3">
+      <div class="card-header">Tidak Berprestasi</div>
+      <div class="card-body">
+        <h5 class="card-title">{{ counts["Tidak Berprestasi"] }}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Plotly Graph -->
+<div class="mt-4">
+  <div id="plotly-graph"></div>
+</div>
+
+<!-- Tabs Section -->
+<h3 class="mt-4">Detail Data</h3>
+<ul class="nav nav-tabs" id="predictionTabs">
+    <li class="nav-item">
+      <a class="nav-link active" id="raw-data-tab" data-toggle="tab" href="#raw-data">Data Mentah</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="labeled-data-tab" data-toggle="tab" href="#labeled-data">Data Berlabel</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="prediction-results-tab" data-toggle="tab" href="#prediction-results">Hasil Prediksi</a>
+    </li>
+  </ul>
+  
+  <div class="tab-content">
+    <!-- Data Mentah -->
+    <div class="tab-pane fade show active" id="raw-data">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>No</th>
+            {% for column in predictions[0]['data_raw'].keys() %}
+              <th>{{ column }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for prediction in predictions %}
+            <tr>
+              <td>{{ prediction.index }}</td>
+              {% for value in prediction.data_raw.values() %}
+                <td>{{ value }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Data Berlabel -->
+    <div class="tab-pane fade" id="labeled-data">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>No</th>
+            {% for column in predictions[0]['data_labeled'].keys() %}
+              <th>{{ column|replace('_label', '') }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for prediction in predictions %}
+            <tr>
+              <td>{{ prediction.index }}</td>
+              {% for value in prediction.data_labeled.values() %}
+                <td>{{ value }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Hasil Prediksi -->
+    <div class="tab-pane fade" id="prediction-results">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Prediksi Prestasi</th>
+            <th>Votes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prediction in predictions %}
+            <tr>
+              <td>{{ prediction.index }}</td>
+              <td>{{ prediction.predicted_class }}</td>
+              <td>
+                {% for class, vote in prediction.votes.items() %}
+                  {{ class }}: {{ vote }}<br>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+  var graphJSON = {{ graph_json|safe }};
+  Plotly.newPlot('plotly-graph', graphJSON.data, graphJSON.layout);
+</script>
+{% endblock %}
