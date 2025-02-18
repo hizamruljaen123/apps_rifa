@@ -1,16 +1,12 @@
 {% extends "base.html" %}
-
 {% block title %}Prediksi Data Uji{% endblock %}
-
 {% block content %}
 <h2>Hasil Prediksi Data Uji</h2>
-
 {% if error %}
   <div class="alert alert-danger mt-3" role="alert">
     {{ error }}
   </div>
 {% endif %}
-
 <!-- Card Section -->
 <div class="row mt-3">
   <div class="col-md-4">
@@ -38,12 +34,10 @@
     </div>
   </div>
 </div>
-
 <!-- Plotly Graph -->
 <div class="mt-4">
   <div id="plotly-graph"></div>
 </div>
-
 <!-- Tabs Section -->
 <h3 class="mt-4">Detail Data</h3>
 <ul class="nav nav-tabs" id="predictionTabs">
@@ -64,7 +58,6 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <!-- <th>No</th> -->
             {% for column in predictions[0]['data_raw'].keys() %}
               <th>{{ column }}</th>
             {% endfor %}
@@ -73,7 +66,6 @@
         <tbody>
           {% for prediction in predictions %}
             <tr>
-              <!-- <td>{{ prediction.index }}</td> -->
               {% for value in prediction.data_raw.values() %}
                 <td>{{ value }}</td>
               {% endfor %}
@@ -88,8 +80,7 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <!-- <th>No</th> -->
-            {% for column in predictions[0]['data_labeled'].keys() %}
+            {% for column in predictions[0]['data_labeled'].keys() if column not in ['No', 'NIS'] %}
               <th>{{ column|replace('_label', '') }}</th>
             {% endfor %}
           </tr>
@@ -97,8 +88,7 @@
         <tbody>
           {% for prediction in predictions %}
             <tr>
-              <!-- <td>{{ prediction.index }}</td> -->
-              {% for value in prediction.data_labeled.values() %}
+              {% for key, value in prediction.data_labeled.items() if key not in ['No', 'NIS'] %}
                 <td>{{ value }}</td>
               {% endfor %}
             </tr>
@@ -112,7 +102,6 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <!-- <th>No</th> -->
             <th>Prediksi Prestasi</th>
             <th>Votes</th>
           </tr>
@@ -120,7 +109,6 @@
         <tbody>
           {% for prediction in predictions %}
             <tr>
-              <!-- <td>{{ prediction.index }}</td> -->
               <td>{{ prediction.predicted_class }}</td>
               <td>
                 {% for class, vote in prediction.votes.items() %}
