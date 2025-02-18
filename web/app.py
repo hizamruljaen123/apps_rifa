@@ -303,59 +303,7 @@ def training():
     except Exception as e:
         return jsonify({"error": f"Error saat melatih model: {str(e)}"}), 500
 
-@app.route('/evaluating', methods=['GET'])
-def evaluating():
-    model_filename = os.path.join(MODEL_DIR, "random_forest_model_max_depth.pkl")
-    encoder_filename = os.path.join(MODEL_DIR, "encoded_feature_names.pkl")
-    target_encoder_filename = os.path.join(MODEL_DIR, "target_encoder.pkl")
-    file_path = os.path.join(DATA_DIR, 'main_data.xlsx')
 
-    if not all([os.path.exists(model_filename), os.path.exists(encoder_filename), os.path.exists(target_encoder_filename), os.path.exists(file_path)]):
-        return jsonify({"error": "Model atau data tidak ditemukan. Silakan latih model terlebih dahulu."}), 400
-
-    try:
-        # Memuat model dan encoders
-        rf_model = joblib.load(model_filename)
-        encoded_feature_names = joblib.load(encoder_filename)
-        label_encoder = joblib.load(target_encoder_filename)
-
-        data = pd.read_excel(file_path)
-        data_cleaned = data.drop(columns=['NO', 'NAMA SISWA', 'NISN', 'NIS'])
-
-        # Encoding variabel kategori 'Status Prestasi' dengan LabelEncoder
-        data_cleaned['Status Prestasi'] = label_encoder.transform(data_cleaned['Status Prestasi'])
-
-        # One-Hot Encoding untuk fitur kategorikal
-        categorical_features = [col for col in data_cleaned.columns if data_cleaned[col].dtype == 'object']
-        data_encoded = pd.get_dummies(data_cleaned, columns=categorical_features)
-
-        # Memastikan semua fitur yang di-encode sudah ada
-        # Jika ada fitur baru yang tidak ada saat training, tambahkan kolom tersebut dengan nilai 0
-        for feature in encoded_feature_names:
-            if feature not in data_encoded.columns:
-                data_encoded[feature] = 0
-
-        # Pisahkan fitur dan target
-        X = data_encoded.drop(columns=['Status Prestasi'])
-        y = data_encoded['Status Prestasi']
-
-        # Pastikan urutan fitur sama seperti saat training
-        X = X[encoded_feature_names]
-
-        # Membagi Data ke Training dan Testing
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-        # Evaluasi Model
-        y_pred = rf_model.predict(X_test)
-        report = classification_report(y_test, y_pred, target_names=label_encoder.classes_, output_dict=True)
-        cm = confusion_matrix(y_test, y_pred)
-
-        return jsonify({
-            "classification_report": report,
-            "confusion_matrix": cm.tolist()
-        }), 200
-    except Exception as e:
-        return jsonify({"error": f"Error saat evaluasi model: {str(e)}"}), 500
 
 @app.route('/rules', methods=['GET'])
 def rules():
@@ -556,7 +504,7 @@ def web_predict_data_uji():
 
             predicted_class = max(votes, key=votes.get) if votes else "Tidak Berprestasi"
             predictions.append({
-                "index": index + 1,
+                # "index": index + 1,
                 "data_raw": raw_data,  # Nilai mentah ditambahkan ke hasil prediksi
                 "data_labeled": row.to_dict(),
                 "predicted_class": predicted_class,
@@ -659,26 +607,151 @@ def web_evaluating():
     """
     Halaman web untuk menampilkan evaluasi model.
     """
+    # Path ke file data latih dan model
     file_path = os.path.join(DATA_DIR, 'main_data.xlsx')
     model_files = [
         os.path.join(MODEL_DIR, "random_forest_model_max_depth.pkl"),
         os.path.join(MODEL_DIR, "encoded_feature_names.pkl"),
         os.path.join(MODEL_DIR, "target_encoder.pkl")
     ]
+    
+    # Cek apakah file model dan data latih ada
     if not all(os.path.exists(f) for f in model_files) or not os.path.exists(file_path):
         return render_template('evaluating.html', error="Model atau data tidak ditemukan. Silakan latih model terlebih dahulu.")
+    
     try:
         # Panggil fungsi evaluating yang sudah ada
         response = evaluating()
+        
+        # Cek status kode respons
         if response[1] == 200:
-            evaluation = response[0].json
+            evaluation = response[0].get_json()  # Gunakan get_json() untuk mendapatkan data JSON
+            
+            # Konversi confusion matrix ke format yang lebih mudah dibaca di HTML
+            confusion_matrix = evaluation.get("confusion_matrix", {})
+            confusion_matrix_table = []
+            classes = sorted(confusion_matrix.keys(), key=lambda x: int(x))
+            for true_class in classes:
+                row = {"class": true_class, "values": []}
+                for pred_class in classes:
+                    row["values"].append(confusion_matrix[true_class].get(pred_class, 0))
+                confusion_matrix_table.append(row)
+            
+            # Tambahkan confusion matrix yang telah diformat ke hasil evaluasi
+            evaluation["confusion_matrix_table"] = confusion_matrix_table
+            
             return render_template('evaluating.html', evaluation=evaluation)
         else:
-            return render_template('evaluating.html', error=response[0].json.get('error'))
+            # Jika ada error, tampilkan pesan error
+            error_message = response[0].get_json().get('error', 'Terjadi kesalahan saat evaluasi model.')
+            return render_template('evaluating.html', error=error_message)
+    
     except Exception as e:
+        # Tangani exception dan tampilkan pesan error
         return render_template('evaluating.html', error=f"Error saat evaluasi model: {str(e)}")
+@app.route('/evaluating', methods=['GET'])
+def evaluating():
+    """
+    Endpoint untuk mengevaluasi model menggunakan data uji.
+    """
+    # Memuat file data uji
+    file_path = os.path.join(DATA_DIR, 'main_data.xlsx')
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Data uji belum diunggah."}), 400
 
+    try:
+        # Membaca data uji
+        data = pd.read_excel(file_path)
 
+        # Preprocessing Data
+        data_cleaned = data.drop(columns=['NO', 'NAMA SISWA', 'NISN', 'NIS'])
+
+        # Encoding variabel kategori 'Status Prestasi' dengan LabelEncoder
+        target_encoder_filename = os.path.join(MODEL_DIR, "target_encoder.pkl")
+        label_encoder = joblib.load(target_encoder_filename)
+        data_cleaned['Status Prestasi'] = label_encoder.transform(data_cleaned['Status Prestasi'])
+
+        # One-Hot Encoding untuk fitur kategorikal
+        categorical_features = [col for col in data_cleaned.columns if data_cleaned[col].dtype == 'object']
+        data_encoded = pd.get_dummies(data_cleaned, columns=categorical_features)
+
+        # Memastikan fitur sesuai dengan model
+        encoder_filename = os.path.join(MODEL_DIR, "encoded_feature_names.pkl")
+        encoded_feature_names = joblib.load(encoder_filename)
+
+        # Menambahkan fitur yang hilang dengan nilai default 0
+        for feature in encoded_feature_names:
+            if feature not in data_encoded.columns:
+                data_encoded[feature] = 0
+
+        # Menghapus fitur tambahan yang tidak diharapkan
+        data_encoded = data_encoded[encoded_feature_names + ['Status Prestasi']]
+
+        # Pisahkan fitur dan target
+        X = data_encoded.drop(columns=['Status Prestasi'])
+        y = data_encoded['Status Prestasi']
+
+        # Memuat model dari file
+        model_filename = os.path.join(MODEL_DIR, "random_forest_model_max_depth.pkl")
+        rf_model = joblib.load(model_filename)
+
+        # Prediksi menggunakan model
+        y_pred = rf_model.predict(X)
+
+        # Evaluasi manual
+        def calculate_metrics(y_true, y_pred):
+            """
+            Menghitung akurasi, presisi, recall, dan F1-score secara manual.
+            """
+            classes = sorted(set(y_true) | set(y_pred))
+            confusion_matrix = {true_class: {pred_class: 0 for pred_class in classes} for true_class in classes}
+
+            for true, pred in zip(y_true, y_pred):
+                confusion_matrix[true][pred] += 1
+
+            metrics = {}
+            total_samples = len(y_true)
+            correct_predictions = 0
+
+            for class_label in classes:
+                TP = confusion_matrix[class_label][class_label]
+                FP = sum(confusion_matrix[other_class][class_label] for other_class in classes if other_class != class_label)
+                FN = sum(confusion_matrix[class_label][other_class] for other_class in classes if other_class != class_label)
+
+                precision = TP / (TP + FP) if (TP + FP) != 0 else 0
+                recall = TP / (TP + FN) if (TP + FN) != 0 else 0
+                f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
+
+                metrics[class_label] = {
+                    "precision": precision,
+                    "recall": recall,
+                    "f1_score": f1_score,
+                    "support": TP + FN
+                }
+
+                correct_predictions += TP
+
+            accuracy = correct_predictions / total_samples if total_samples > 0 else 0
+            return {
+                "accuracy": accuracy,
+                "confusion_matrix": confusion_matrix,
+                "classification_report": metrics
+            }
+
+        evaluation = calculate_metrics(y, y_pred)
+
+        # Konversi hasil evaluasi ke format JSON
+        evaluation_result = {
+            "accuracy": evaluation["accuracy"],
+            "confusion_matrix": evaluation["confusion_matrix"],
+            "classification_report": evaluation["classification_report"]
+        }
+
+        return jsonify(evaluation_result), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error saat evaluasi model: {str(e)}"}), 500
+    
 @app.route('/web/rules', methods=['GET'])
 def web_rules():
     """
