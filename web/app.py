@@ -201,6 +201,9 @@ def training():
     try:
         data = pd.read_excel(file_path)
 
+        # Menggunakan hanya 80% data dari main_data.xlsx
+        data = data.sample(frac=0.8, random_state=42).reset_index(drop=True)
+
         # Preprocessing Data
         data_cleaned = data.drop(columns=['NO', 'NAMA SISWA', 'NISN', 'NIS'])
 
@@ -219,7 +222,7 @@ def training():
         X = data_encoded.drop(columns=['Status Prestasi'])
         y = data_encoded['Status Prestasi']
 
-        # Membagi Data ke Training dan Testing
+        # Membagi Data ke Training dan Testing (tetap 70-30 dari 80% data)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
         # Membentuk Model Random Forest dengan Max Depth Maksimal
@@ -295,7 +298,7 @@ def training():
             json.dump(all_rules, f, indent=4)
 
         return jsonify({
-            "message": "Model berhasil dilatih dan disimpan.",
+            "message": "Model berhasil dilatih dengan 80% data dan disimpan.",
             "rules_text": "rules_readable.txt",
             "rules_json": "rules.json",
             "visualized_trees": len(trees_to_visualize)
@@ -424,9 +427,9 @@ def web_predict_data_uji():
     """
     Menampilkan halaman web yang berisi hasil prediksi data uji
     serta jumlah siswa berprestasi, cukup berprestasi, dan tidak berprestasi
-    dalam bentuk card dan grafik.
+    dalam bentuk card dan grafik, hanya menggunakan 20% data dari baris paling akhir.
     """
-    file_path = os.path.join(DATA_DIR, 'data_uji.xlsx')
+    file_path = os.path.join(DATA_DIR, 'main_data.xlsx')  # Menggunakan main_data.xlsx
     rules_json_filename = os.path.join(TREE_VIS_DIR, 'rules.json')
 
     if not os.path.exists(file_path):
@@ -436,32 +439,20 @@ def web_predict_data_uji():
         return render_template('predict_data_uji.html', error="Rules tidak ditemukan. Silakan latih model terlebih dahulu.")
 
     try:
-        # Membaca data uji
+        # Membaca data dari main_data.xlsx
         data = pd.read_excel(file_path)
         if data.empty:
             return render_template('predict_data_uji.html', error="Data uji kosong.")
 
-        def label_nilai(value):
-            """Mengonversi nilai numerik menjadi kategori label."""
-            if value <= 40:
-                return "Sangat Buruk"
-            elif 40 < value <= 55:
-                return "Buruk"
-            elif 55 < value <= 75:
-                return "Cukup"
-            elif 76 < value <= 85:
-                return "Baik"
-            else:
-                return "Sangat Baik"
+        # Ambil hanya 20% baris terakhir
+        num_rows = int(len(data) * 0.2)  # Hitung jumlah baris untuk 20%
+        data = data.tail(num_rows).reset_index(drop=True)  # Ambil 20% terakhir
 
-        # Simpan data mentah sebelum diubah ke label
+        # Simpan data mentah (sudah dalam format kategorikal)
         data_raw = data.copy()
 
-        # Melabeli data numerik menjadi kategori
+        # Data sudah dalam bentuk kategorikal, jadi langsung gunakan
         data_labeled = data.copy()
-        numeric_columns = data_labeled.select_dtypes(include=['number']).columns
-        for col in numeric_columns:
-            data_labeled[col] = data_labeled[col].apply(label_nilai)
 
         # Memuat aturan
         with open(rules_json_filename, 'r') as f:
@@ -504,7 +495,6 @@ def web_predict_data_uji():
 
             predicted_class = max(votes, key=votes.get) if votes else "Tidak Berprestasi"
             predictions.append({
-                # "index": index + 1,
                 "data_raw": raw_data,  # Nilai mentah ditambahkan ke hasil prediksi
                 "data_labeled": row.to_dict(),
                 "predicted_class": predicted_class,
@@ -528,7 +518,7 @@ def web_predict_data_uji():
                 marker_color=["#007bff", "#ffc107", "#dc3545"]
             )
         ])
-        fig.update_layout(title="Distribusi Prediksi Prestasi Siswa", xaxis_title="Kategori", yaxis_title="Jumlah Siswa")
+        fig.update_layout(title="Distribusi Prediksi Prestasi Siswa (20% Data Terakhir)", xaxis_title="Kategori", yaxis_title="Jumlah Siswa")
 
         graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -536,6 +526,7 @@ def web_predict_data_uji():
 
     except Exception as e:
         return render_template('predict_data_uji.html', error=f"Error saat memproses prediksi: {str(e)}")
+
 
 @app.route('/web')
 def web_index():
