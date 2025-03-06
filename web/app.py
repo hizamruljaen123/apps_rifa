@@ -12,15 +12,17 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 import json
 import plotly.graph_objects as go
-
+from flask_cors import CORS
 import plotly
 app = Flask(__name__)
+CORS(app)
 
 # Direktori untuk menyimpan model dan visualisasi
 MODEL_DIR = 'models'
 TREE_VIS_DIR = 'tree_visualization'
 DATA_DIR = 'data'
 STATIC_TREE_VIS_DIR = os.path.join('static', 'tree_visualization')
+VISUALIZATION_DIR = os.path.join('static', 'tree_visualization')
 
 # Membuat direktori jika belum ada
 for directory in [MODEL_DIR, TREE_VIS_DIR, DATA_DIR, STATIC_TREE_VIS_DIR]:
@@ -166,7 +168,227 @@ def index():
         }
     }
     return jsonify(api_endpoints), 200
+def manual_evaluation_metrics(y_true, y_pred):
+    """
+    Menghitung metrik evaluasi (accuracy, precision, recall, f1-score) secara manual.
+    y_true: list/array dari nilai aktual
+    y_pred: list/array dari nilai prediksi
+    """
+    # Mendapatkan kelas unik
+    classes = sorted(set(y_true) | set(y_pred))
+    n_samples = len(y_true)
+    
+    # Inisialisasi confusion matrix sebagai dictionary
+    confusion_matrix = {c: {pred_c: 0 for pred_c in classes} for c in classes}
+    for true, pred in zip(y_true, y_pred):
+        confusion_matrix[true][pred] += 1
+    
+    # Menghitung accuracy
+    correct_predictions = sum(confusion_matrix[c][c] for c in classes)
+    accuracy = correct_predictions / n_samples if n_samples > 0 else 0
+    
+    # Menghitung precision, recall, dan F1-score per kelas, lalu rata-rata
+    precision_dict = {}
+    recall_dict = {}
+    f1_dict = {}
+    support_dict = {}
+    
+    for c in classes:
+        # True Positives (TP), False Positives (FP), False Negatives (FN)
+        TP = confusion_matrix[c][c]
+        FP = sum(confusion_matrix[other_c][c] for other_c in classes if other_c != c)
+        FN = sum(confusion_matrix[c][other_c] for other_c in classes if other_c != c)
+        TN = sum(confusion_matrix[other_c][other_pred] 
+                 for other_c in classes if other_c != c 
+                 for other_pred in classes if other_pred != c)
+        
+        # Precision = TP / (TP + FP)
+        precision = TP / (TP + FP) if (TP + FP) > 0 else 0
+        precision_dict[c] = precision
+        
+        # Recall = TP / (TP + FN)
+        recall = TP / (TP + FN) if (TP + FN) > 0 else 0
+        recall_dict[c] = recall
+        
+        # F1-score = 2 * (precision * recall) / (precision + recall)
+        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        f1_dict[c] = f1
+        
+        # Support (jumlah kemunculan kelas aktual)
+        support_dict[c] = TP + FN
+    
+    # Menghitung rata-rata weighted untuk precision, recall, dan F1-score
+    total_support = sum(support_dict.values())
+    precision_weighted = sum(precision_dict[c] * support_dict[c] for c in classes) / total_support if total_support > 0 else 0
+    recall_weighted = sum(recall_dict[c] * support_dict[c] for c in classes) / total_support if total_support > 0 else 0
+    f1_weighted = sum(f1_dict[c] * support_dict[c] for c in classes) / total_support if total_support > 0 else 0
+    
+    return {
+        "accuracy": accuracy,
+        "precision": precision_weighted,
+        "recall": recall_weighted,
+        "f1_score": f1_weighted
+    }
 
+# Routing tunggal dengan metode POST
+def extract_rules(rf_model, feature_names, class_names):
+    rules = []
+    for idx, estimator in enumerate(rf_model.estimators_[:5]):  # Batasi ke 5 pohon untuk efisiensi
+        tree = estimator.tree_
+        feature = tree.feature
+        threshold = tree.threshold
+        children_left = tree.children_left
+        children_right = tree.children_right
+        value = tree.value
+        
+        def recurse(node, conditions):
+            if children_left[node] == -1 and children_right[node] == -1:  # Leaf node
+                class_idx = value[node].argmax()
+                class_name = class_names[class_idx]
+                rule = f"JIKA {' DAN '.join(conditions)} MAKA Status Prestasi = {class_name}"
+                rules.append(rule)
+            else:
+                feat_idx = feature[node]
+                if feat_idx != -2:  # Bukan leaf
+                    feat_name = feature_names[feat_idx]
+                    thresh = threshold[node]
+                    
+                    # Kondisi untuk cabang kiri (<= threshold) berarti FALSE
+                    left_conditions = conditions + [f"{feat_name} = FALSE"]
+                    recurse(children_left[node], left_conditions)
+                    
+                    # Kondisi untuk cabang kanan (> threshold) berarti TRUE
+                    right_conditions = conditions + [f"{feat_name} = TRUE"]
+                    recurse(children_right[node], right_conditions)
+        
+        recurse(0, [])
+    return rules
+
+# Routing tunggal dengan metode POST
+@app.route('/process', methods=['POST'])
+def process():
+    try:
+        # Menerima persentase data latih dari request
+        data = request.get_json()
+        train_percentage = data.get('train_percentage', None)
+        
+        # Validasi input
+        if train_percentage is None:
+            return jsonify({"error": "Parameter 'train_percentage' harus disertakan."}), 400
+        if not isinstance(train_percentage, (int, float)) or train_percentage < 0 or train_percentage > 100:
+            return jsonify({"error": "Persentase data latih harus berupa angka antara 0 dan 100."}), 400
+        
+        # Membaca data dari file
+        file_path = os.path.join(DATA_DIR, 'main_data.xlsx')
+        if not os.path.exists(file_path):
+            return jsonify({"error": "Data belum diunggah."}), 400
+        data = pd.read_excel(file_path)
+        
+        # Simpan data asli untuk informasi NIS dan NAMA SISWA
+        data_raw = data.copy()
+        
+        # Preprocessing Data
+        data_cleaned = data.drop(columns=['NO', 'NAMA SISWA', 'NISN', 'NIS'], errors='ignore')
+        
+        # Encoding variabel target 'Status Prestasi' dengan LabelEncoder
+        label_encoder = LabelEncoder()
+        data_cleaned['Status Prestasi'] = label_encoder.fit_transform(data_cleaned['Status Prestasi'])
+        
+        # One-Hot Encoding untuk fitur kategorikal
+        categorical_features = [col for col in data_cleaned.columns if data_cleaned[col].dtype == 'object']
+        data_encoded = pd.get_dummies(data_cleaned, columns=categorical_features)
+        
+        # Pisahkan fitur dan target
+        X = data_encoded.drop(columns=['Status Prestasi'])
+        y = data_encoded['Status Prestasi']
+        
+        # Membagi data berdasarkan persentase
+        test_size = 1 - (train_percentage / 100)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+        
+        # Mengambil indeks untuk data latih dan data uji
+        train_indices = X_train.index
+        test_indices = X_test.index
+        
+        # Data latih dan data uji dalam bentuk asli
+        train_data_raw = data_raw.loc[train_indices].to_dict(orient='records')
+        test_data_raw = data_raw.loc[test_indices]
+        
+        # Melatih model Random Forest
+        rf_model = RandomForestClassifier(n_estimators=300, max_depth=None, random_state=42)
+        rf_model.fit(X_train, y_train)
+        
+        # Simpan model
+        model_filename = os.path.join(MODEL_DIR, "random_forest_model.pkl")
+        joblib.dump(rf_model, model_filename)
+        
+        # Ekstrak aturan dengan format TRUE/FALSE
+        feature_names = X.columns.tolist()
+        class_names = label_encoder.classes_.tolist()
+        rules = extract_rules(rf_model, feature_names, class_names)
+        rules_json_filename = os.path.join(MODEL_DIR, 'rules.json')
+        with open(rules_json_filename, 'w') as f:
+            json.dump(rules, f, indent=4)
+        
+        # Membuat visualisasi pohon keputusan dari salah satu estimator
+        plt.figure(figsize=(20, 10))
+        plot_tree(
+            rf_model.estimators_[0],
+            feature_names=feature_names,
+            class_names=class_names,
+            filled=True,
+            rounded=True,
+            fontsize=10
+        )
+        visualization_filename = 'decision_tree.png'
+        visualization_path = os.path.join(VISUALIZATION_DIR, visualization_filename)
+        plt.savefig(visualization_path)
+        plt.close()
+        
+        # URL untuk mengakses visualisasi
+        visualization_url = url_for('static', filename=f'tree_visualization/{visualization_filename}', _external=True)
+        
+        # Melakukan prediksi pada data latih dan data uji
+        y_train_pred = rf_model.predict(X_train)
+        y_test_pred = rf_model.predict(X_test)
+        
+        # Mengembalikan hasil prediksi ke label asli
+        y_test_pred_labels = label_encoder.inverse_transform(y_test_pred)
+        
+        # Membuat daftar hasil prediksi untuk data uji dengan NIS, NAMA SISWA, dan Hasil Prediksi
+        predictions = []
+        for idx, pred_label in zip(test_indices, y_test_pred_labels):
+            row = test_data_raw.loc[idx]
+            predictions.append({
+                "NIS": row.get('NIS', 'N/A'),
+                "NAMA SISWA": row.get('NAMA SISWA', 'N/A'),
+                "Hasil Prediksi": pred_label
+            })
+        
+        # Evaluasi manual untuk data latih
+        train_evaluation = manual_evaluation_metrics(y_train, y_train_pred)
+        
+        # Evaluasi manual untuk data uji
+        test_evaluation = manual_evaluation_metrics(y_test, y_test_pred)
+        
+        # Mengembalikan hasil dalam bentuk JSON
+        response = {
+            "message": "Model berhasil dilatih, aturan diekstrak, visualisasi dibuat, dan dievaluasi.",
+            "train_percentage": train_percentage,
+            "test_percentage": 100 - train_percentage,
+            "training_data": train_data_raw,  # Semua data latih
+            "predictions": predictions,  # NIS, NAMA SISWA, dan Hasil Prediksi untuk data uji
+            "evaluation": {
+                "train": train_evaluation,
+                "test": test_evaluation
+            },
+            "rules": rules,  # Aturan dalam format TRUE/FALSE
+            "visualization": visualization_url  # URL ke gambar pohon keputusan
+        }
+        return jsonify(response), 200
+    
+    except Exception as e:
+        return jsonify({"error": f"Error saat memproses: {str(e)}"}), 500
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'file' not in request.files:
@@ -535,6 +757,12 @@ def web_index():
     """
     return render_template('index.html')
 
+@app.route('/web/process')
+def web_process():
+    """
+    Halaman utama web yang menampilkan navigasi ke semua fungsi.
+    """
+    return render_template('process.html')
 
 @app.route('/web/upload', methods=['GET', 'POST'])
 def web_upload():

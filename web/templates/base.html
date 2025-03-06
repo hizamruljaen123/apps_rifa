@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.js"></script>
   
     <title>{% block title %}Aplikasi Prestasi Siswa{% endblock %}</title>
   </head>
@@ -22,11 +23,17 @@
       <div class="bg-dark border-right" id="sidebar-wrapper">
         <div class="sidebar-heading text-white">Prestasi Siswa</div>
         <div class="list-group list-group-flush">
-          <a href="{{ url_for('web_upload') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/upload' %}active{% endif %}">
+          <!-- <a href="{{ url_for('web_upload') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/upload' %}active{% endif %}">
             <i class="fas fa-upload mr-2"></i>Upload Data
-          </a>
-          <a href="{{ url_for('web_data') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/data' %}active{% endif %}">
+          </a> -->
+          <!-- <a href="{{ url_for('web_data') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/data' %}active{% endif %}">
             <i class="fas fa-table mr-2"></i>Data Latih
+          </a> -->
+          <a href="{{ url_for('web_predict') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/predict' %}active{% endif %}">
+            <i class="fas fa-robot mr-2"></i>Prediksi
+          </a>
+          <a href="{{ url_for('web_process') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/predict' %}active{% endif %}">
+            <i class="fas fa-robot mr-2"></i>Random Forest Simulation
           </a>
           <a href="{{ url_for('web_training') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/training' %}active{% endif %}">
             <i class="fas fa-cogs mr-2"></i>Latih Model
@@ -40,12 +47,10 @@
           <a href="{{ url_for('web_visualizations') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/visualizations' %}active{% endif %}">
             <i class="fas fa-project-diagram mr-2"></i>Visualisasi
           </a>
-          <a href="{{ url_for('web_predict_data_uji') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/predict' %}active{% endif %}">
+          <!-- <a href="{{ url_for('web_predict_data_uji') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/predict' %}active{% endif %}">
             <i class="fas fa-star mr-2"></i>Data Uji
-          </a>
-          <a href="{{ url_for('web_predict') }}" class="list-group-item list-group-item-action bg-dark text-white {% if request.path == '/web/predict' %}active{% endif %}">
-            <i class="fas fa-robot mr-2"></i>Prediksi
-          </a>
+          </a> -->
+          
         </div>
       </div>
       <!-- /#sidebar-wrapper -->
@@ -76,7 +81,7 @@
     <!-- Optional JavaScript; choose one of the two! -->
   
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   
     <!-- Custom JavaScript for Sidebar Toggle -->

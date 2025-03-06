@@ -9,8 +9,8 @@
   <p class="lead">Aplikasi ini memungkinkan Anda untuk mengelola data prestasi siswa, melatih model prediksi, dan menganalisis hasilnya.</p>
   <hr class="my-4">
   <p>Pilih salah satu fungsi di bawah ini untuk memulai:</p>
-  <a class="btn btn-primary btn-lg mr-2" href="{{ url_for('web_upload') }}" role="button">Upload Data</a>
-  <a class="btn btn-success btn-lg mr-2" href="{{ url_for('web_data') }}" role="button">Data Latih</a>
+  <!-- <a class="btn btn-primary btn-lg mr-2" href="{{ url_for('web_upload') }}" role="button">Upload Data</a> -->
+  <a class="btn btn-success btn-lg mr-2" href="{{ url_for('web_process') }}" role="button">Simulasi Random Forest</a>
   <a class="btn btn-info btn-lg mr-2" href="{{ url_for('web_training') }}" role="button">Latih Model</a>
   <a class="btn btn-warning btn-lg mr-2" href="{{ url_for('web_evaluating') }}" role="button">Evaluasi Model</a>
   <a class="btn btn-secondary btn-lg mr-2" href="{{ url_for('web_rules') }}" role="button">Aturan</a>
