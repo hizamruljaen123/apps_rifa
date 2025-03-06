@@ -59,6 +59,51 @@
         </div>
     </div>
 
+
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <div class="card">
+                <div class="card-header bg-success text-white">Data Set</div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table table-bordered table-striped" id="trainDataTable">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NIS</th>
+                                    <th>NISN</th>
+                                    <th>Nama Siswa</th>
+                                    <th>PAI</th>
+                                    <th>PKn</th>
+                                    <th>BIN</th>
+                                    <th>MTK</th>
+                                    <th>SEI</th>
+                                    <th>BIG</th>
+                                    <th>SEB</th>
+                                    <th>PJOK</th>
+                                    <th>PRA</th>
+                                    <th>GEO</th>
+                                    <th>SEJ</th>
+                                    <th>Sos</th>
+                                    <th>Eko</th>
+                                    <th>AA</th>
+                                    <th>TIK</th>
+                                    <th>BDS</th>
+                                    <th>Status Prestasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-siswa">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
     <!-- Tabel Data Latih dan Uji -->
     <div class="row">
         <div class="col-md-12">
@@ -417,5 +462,47 @@
         }
     });
 });
+
+async function tampilkanDataSiswa() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/get_all_data');
+        const data = await response.json();
+
+        const tbody = document.getElementById('data-siswa');
+        tbody.innerHTML = ''; // Kosongkan isi tbody sebelum menambahkan data baru
+
+        data.all_data.forEach(siswa => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${siswa.NO}</td>
+                <td>${siswa.NIS}</td>
+                <td>${siswa.NISN}</td>
+                <td>${siswa['NAMA SISWA']}</td>
+                <td>${siswa['Status Prestasi']}</td>
+                <td>${siswa.AA}</td>
+                <td>${siswa.BDS}</td>
+                <td>${siswa.BIG}</td>
+                <td>${siswa.BIN}</td>
+                <td>${siswa.Eko}</td>
+                <td>${siswa.GEO}</td>
+                <td>${siswa.MTK}</td>
+                <td>${siswa.PAI}</td>
+                <td>${siswa.PJOK}</td>
+                <td>${siswa.PKn}</td>
+                <td>${siswa.PRA}</td>
+                <td>${siswa.SEB}</td>
+                <td>${siswa.SEI}</td>
+                <td>${siswa.SEJ}</td>
+                <td>${siswa.Sos}</td>
+                <td>${siswa.TIK}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Terjadi kesalahan:', error);
+    }
+}
+
+tampilkanDataSiswa();
 </script>
 {% endblock %}

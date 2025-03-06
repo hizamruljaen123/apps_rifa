@@ -264,6 +264,27 @@ def extract_rules(rf_model, feature_names, class_names):
         recurse(0, [])
     return rules
 
+@app.route('/get_all_data', methods=['GET'])
+def get_all_data():
+    try:
+        # Membaca data dari file
+        file_path = os.path.join(DATA_DIR, 'main_data.xlsx')
+        if not os.path.exists(file_path):
+            return jsonify({"error": "Data belum diunggah."}), 400
+        data = pd.read_excel(file_path)
+        
+        # Simpan data asli dan konversi ke format JSON
+        all_data_raw = data.to_dict(orient='records')
+        
+        # Mengembalikan hasil dalam bentuk JSON
+        response = {
+            "message": "Berhasil mengambil seluruh data.",
+            "all_data": all_data_raw
+        }
+        return jsonify(response), 200
+    
+    except Exception as e:
+        return jsonify({"error": f"Error saat memproses: {str(e)}"}), 500
 # Routing tunggal dengan metode POST
 @app.route('/process', methods=['POST'])
 def process():
