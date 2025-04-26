@@ -87,9 +87,6 @@
                                     <th>SEJ</th>
                                     <th>Sos</th>
                                     <th>Eko</th>
-                                    <th>AA</th>
-                                    <th>TIK</th>
-                                    <th>BDS</th>
                                     <th>Status Prestasi</th>
                                 </tr>
                             </thead>
@@ -116,9 +113,9 @@
                             <thead>
                                 <tr>
                                     <th>NO</th>
-                                    <th>NIS</th>
+                                    <th>NAMA SISWA</th>
                                     <th>NISN</th>
-                                    <th>Nama Siswa</th>
+                                    <th>NIS</th>
                                     <th>PAI</th>
                                     <th>PKn</th>
                                     <th>BIN</th>
@@ -132,18 +129,20 @@
                                     <th>SEJ</th>
                                     <th>Sos</th>
                                     <th>Eko</th>
-                                    <th>AA</th>
-                                    <th>TIK</th>
-                                    <th>BDS</th>
                                     <th>Status Prestasi</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody id="hasil-prerdiksi">
+
+                                
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <br>
             <div class="card">
@@ -153,12 +152,12 @@
                         <table class="table table-bordered table-striped" id="testDataTable">
                             <thead>
                                 <tr>
-                                    <th>NIS</th>
                                     <th>Nama Siswa</th>
+                                    <th>NIS</th>
                                     <th>Hasil Prediksi</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody id="hasil-prediksi-data-uji"></tbody>
                         </table>
                     </div>
                 </div>
@@ -321,47 +320,21 @@
         contentType: 'application/json',
         data: JSON.stringify({ train_percentage: parseInt(trainPercentage) }),
         success: function(response) {
-            // Update Tabel Data Latih
-            const trainData = response.training_data;
-            let trainHtml = '';
-            trainData.forEach(item => {
-                trainHtml += `<tr>
-                    <td>${item.NO || 'N/A'}</td>
-                    <td>${item.NIS || 'N/A'}</td>
-                    <td>${item.NISN || 'N/A'}</td>
-                    <td>${item['NAMA SISWA'] || 'N/A'}</td>
-                    <td>${item.PAI || 'N/A'}</td>
-                    <td>${item.PKn || 'N/A'}</td>
-                    <td>${item.BIN || 'N/A'}</td>
-                    <td>${item.MTK || 'N/A'}</td>
-                    <td>${item.SEI || 'N/A'}</td>
-                    <td>${item.BIG || 'N/A'}</td>
-                    <td>${item.SEB || 'N/A'}</td>
-                    <td>${item.PJOK || 'N/A'}</td>
-                    <td>${item.PRA || 'N/A'}</td>
-                    <td>${item.GEO || 'N/A'}</td>
-                    <td>${item.SEJ || 'N/A'}</td>
-                    <td>${item.Sos || 'N/A'}</td>
-                    <td>${item.Eko || 'N/A'}</td>
-                    <td>${item.AA || 'N/A'}</td>
-                    <td>${item.TIK || 'N/A'}</td>
-                    <td>${item.BDS || 'N/A'}</td>
-                    <td>${item['Status Prestasi'] || 'N/A'}</td>
-                </tr>`;
+            // Update Tabel Data Siswa
+            const allData = response.training_data;
+            const columnNames = response.column_names;
+            let dataHtml = '';
+            const dataSiswaTbody = document.getElementById('data-siswa');
+            dataSiswaTbody.innerHTML = '';
+            allData.forEach(siswa => {
+                const row = document.createElement('tr');
+                columnNames.forEach(column => {
+                    const cell = document.createElement('td');
+                    cell.textContent = siswa[column] || 'N/A';
+                    row.appendChild(cell);
+                });
+                dataSiswaTbody.appendChild(row);
             });
-            $('#trainDataTable tbody').html(trainHtml);
-
-            // Update Tabel Data Uji (Hasil Prediksi)
-            const predictions = response.predictions;
-            let testHtml = '';
-            predictions.forEach(item => {
-                testHtml += `<tr>
-                    <td>${item.NIS}</td>
-                    <td>${item['NAMA SISWA']}</td>
-                    <td>${item['Hasil Prediksi']}</td>
-                </tr>`;
-            });
-            $('#testDataTable tbody').html(testHtml);
 
             // Update Evaluasi Model
             const trainEval = response.evaluation.train;
@@ -375,17 +348,41 @@
             $('#testRecall').text(testEval.recall.toFixed(2));
             $('#testF1').text(testEval.f1_score.toFixed(2));
 
-            // Update Rules Textarea
-            const rules = response.rules.join('\n');
-            $('#rulesTextarea').val(rules);
+            // Update Data Latih Table
+            const trainingData = response.training_data;
+            const hasilPrediksiTbody = document.getElementById('hasil-prerdiksi');
+            hasilPrediksiTbody.innerHTML = '';
+            trainingData.forEach(data => {
+                const row = document.createElement('tr');
+                columnNames.forEach(column => {
+                    const cell = document.createElement('td');
+                    cell.textContent = data[column] || 'N/A';
+                    row.appendChild(cell);
+                });
+                hasilPrediksiTbody.appendChild(row);
+            });
+
+            // Update Data Uji Table
+            const predictions = response.predictions;
+            const hasilPrediksiDataUjiTbody = document.getElementById('hasil-prediksi-data-uji');
+            hasilPrediksiDataUjiTbody.innerHTML = '';
+            predictions.forEach(prediction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${prediction['NAMA SISWA']}</td>
+                    <td>${prediction['NIS']}</td>
+                    <td>${prediction['Hasil Prediksi']}</td>
+                `;
+                hasilPrediksiDataUjiTbody.appendChild(row);
+            });
 
             // Hitung frekuensi dan persentase untuk Data Latih
             let trainBerprestasi = 0;
             let trainTidakBerprestasi = 0;
             let trainCukupBerprestasi = 0; // Jika ada kategori lain
-            const trainTotal = trainData.length;
+            const trainTotal = allData.length;
 
-            trainData.forEach(item => {
+            allData.forEach(item => {
                 const status = item['Status Prestasi'].toLowerCase();
                 console.log(status);
                 if (status === 'berprestasi') {
@@ -397,24 +394,26 @@
                 }
             });
 
-            const trainBerprestasiPct = trainTotal > 0 ? (trainBerprestasi / trainTotal * 100).toFixed(2) : 0;
-            const trainTidakBerprestasiPct = trainTotal > 0 ? (trainTidakBerprestasi / trainTotal * 100).toFixed(2) : 0;
-            const trainCukupBerprestasiPct = trainTotal > 0 ? (trainCukupBerprestasi / trainTotal * 100).toFixed(2) : 0;
+            const trainBerprestasiPct = allData.length > 0 ? (trainBerprestasi / allData.length * 100).toFixed(2) : 0;
+            const trainTidakBerprestasiPct = allData.length > 0 ? (trainTidakBerprestasi / allData.length * 100).toFixed(2) : 0;
+            const trainCukupBerprestasiPct = allData.length > 0 ? (trainCukupBerprestasi / allData.length * 100).toFixed(2) : 0;
 
-            trainChart.data.labels = ['Berprestasi', 'Tidak Berprestasi', 'Cukup Berprestasi'];
-            trainChart.data.datasets[0].data = [trainBerprestasi, trainTidakBerprestasi, trainCukupBerprestasi];
-            trainChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545', '#ffc107']; // Hijau, Merah, Kuning
+            trainChart.data.labels = ['Berprestasi', 'Tidak Berprestasi'];
+            trainChart.data.datasets[0].data = [trainBerprestasi, trainTidakBerprestasi];
+            trainChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545'];
             trainChart.options.plugins.datalabels = {
                 display: true,
                 formatter: (value, context) => {
-                    const pct = trainTotal > 0 ? (value / trainTotal * 100).toFixed(2) : 0;
+                    const pct = allData.length > 0 ? (value / allData.length * 100).toFixed(2) : 0;
                     return `${value} (${pct}%)`;
                 },
                 color: '#fff',
                 anchor: 'end',
                 align: 'start'
             };
-            trainChart.update();
+            if (trainChart) {
+                trainChart.update();
+            }
 
             // Hitung frekuensi dan persentase untuk Data Uji
             let testBerprestasi = 0;
@@ -437,9 +436,9 @@
             const testTidakBerprestasiPct = testTotal > 0 ? (testTidakBerprestasi / testTotal * 100).toFixed(2) : 0;
             const testCukupBerprestasiPct = testTotal > 0 ? (testCukupBerprestasi / testTotal * 100).toFixed(2) : 0;
 
-            testChart.data.labels = ['Berprestasi', 'Tidak Berprestasi', 'Cukup Berprestasi'];
-            testChart.data.datasets[0].data = [testBerprestasi, testTidakBerprestasi, testCukupBerprestasi];
-            testChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545', '#ffc107']; // Hijau, Merah, Kuning
+            testChart.data.labels = ['Berprestasi', 'Tidak Berprestasi'];
+            testChart.data.datasets[0].data = [testBerprestasi, testTidakBerprestasi];
+            testChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545']; // Hijau, Merah, Kuning
             testChart.options.plugins.datalabels = {
                 display: true,
                 formatter: (value, context) => {
@@ -450,12 +449,18 @@
                 anchor: 'end',
                 align: 'start'
             };
-            testChart.update();
+            if (testChart) {
+                testChart.update();
+            }
 
             // Debugging: Log jumlah dan data
             console.log('Train Data:', { Berprestasi: trainBerprestasi, TidakBerprestasi: trainTidakBerprestasi, CukupBerprestasi: trainCukupBerprestasi, Total: trainTotal });
             console.log('Test Data:', { Berprestasi: testBerprestasi, TidakBerprestasi: testTidakBerprestasi, CukupBerprestasi: testCukupBerprestasi, Total: testTotal });
-            console.log('Predictions:', predictions);
+
+            // Update Rules Textarea
+            const rules = response.rules.join('\n');
+            $('#rulesTextarea').val(rules);
+
         },
         error: function(xhr) {
             alert('Error: ' + xhr.responseJSON.error);
@@ -478,23 +483,20 @@ async function tampilkanDataSiswa() {
                 <td>${siswa.NIS}</td>
                 <td>${siswa.NISN}</td>
                 <td>${siswa['NAMA SISWA']}</td>
-                <td>${siswa['Status Prestasi']}</td>
-                <td>${siswa.AA}</td>
-                <td>${siswa.BDS}</td>
-                <td>${siswa.BIG}</td>
-                <td>${siswa.BIN}</td>
-                <td>${siswa.Eko}</td>
-                <td>${siswa.GEO}</td>
-                <td>${siswa.MTK}</td>
                 <td>${siswa.PAI}</td>
-                <td>${siswa.PJOK}</td>
                 <td>${siswa.PKn}</td>
-                <td>${siswa.PRA}</td>
-                <td>${siswa.SEB}</td>
+                <td>${siswa.BIN}</td>
+                <td>${siswa.MTK}</td>
                 <td>${siswa.SEI}</td>
+                <td>${siswa.BIG}</td>
+                <td>${siswa.SEB}</td>
+                <td>${siswa.PJOK}</td>
+                <td>${siswa.PRA}</td>
+                <td>${siswa.GEO}</td>
                 <td>${siswa.SEJ}</td>
                 <td>${siswa.Sos}</td>
-                <td>${siswa.TIK}</td>
+                <td>${siswa.Eko}</td>
+                <td>${siswa['Status Prestasi']}</td>
             `;
             tbody.appendChild(row);
         });

@@ -51,10 +51,8 @@ label_mapping_per_feature = {
     'GEO': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
     'SEJ': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
     'Sos': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
-    'Eko': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
-    'AA': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
-    'TIK': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
-    'BDS': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"]
+    'Eko': ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"]
+
 }
 
 # Fungsi untuk mengganti label numerik dengan label asli
@@ -230,38 +228,45 @@ def manual_evaluation_metrics(y_true, y_pred):
         "f1_score": f1_weighted
     }
 
-# Routing tunggal dengan metode POST
-def extract_rules(rf_model, feature_names, class_names):
+# Fungsi untuk mengekstrak aturan dari pohon keputusan tunggal
+def extract_rules(tree, feature_names, class_names):
     rules = []
-    for idx, estimator in enumerate(rf_model.estimators_[:5]):  # Batasi ke 5 pohon untuk efisiensi
-        tree = estimator.tree_
-        feature = tree.feature
-        threshold = tree.threshold
-        children_left = tree.children_left
-        children_right = tree.children_right
-        value = tree.value
-        
-        def recurse(node, conditions):
-            if children_left[node] == -1 and children_right[node] == -1:  # Leaf node
-                class_idx = value[node].argmax()
-                class_name = class_names[class_idx]
-                rule = f"JIKA {' DAN '.join(conditions)} MAKA Status Prestasi = {class_name}"
-                rules.append(rule)
-            else:
-                feat_idx = feature[node]
-                if feat_idx != -2:  # Bukan leaf
-                    feat_name = feature_names[feat_idx]
-                    thresh = threshold[node]
-                    
-                    # Kondisi untuk cabang kiri (<= threshold) berarti FALSE
-                    left_conditions = conditions + [f"{feat_name} = FALSE"]
-                    recurse(children_left[node], left_conditions)
-                    
-                    # Kondisi untuk cabang kanan (> threshold) berarti TRUE
-                    right_conditions = conditions + [f"{feat_name} = TRUE"]
-                    recurse(children_right[node], right_conditions)
-        
-        recurse(0, [])
+    tree_ = tree.tree_
+    feature = tree_.feature
+    threshold = tree_.threshold
+    children_left = tree_.children_left
+    children_right = tree_.children_right
+    value = tree_.value
+
+    def recurse(node, conditions):
+        if children_left[node] == -1 and children_right[node] == -1:  # Leaf node
+            class_idx = value[node].argmax()
+            class_name = class_names[class_idx]
+            rule = (conditions, class_name)  # Mengembalikan kondisi dan nama kelas
+            rules.append(rule)
+        else:
+            feat_idx = feature[node]
+            if feat_idx != -2:  # Bukan leaf
+                feat_name = feature_names[feat_idx]
+                thresh = threshold[node]
+
+                # Kondisi untuk cabang kiri (<= threshold)
+                left_conditions = conditions + [f"{feat_name} <= {thresh:.2f}"]
+                recurse(children_left[node], left_conditions)
+
+                # Kondisi untuk cabang kanan (> threshold)
+                right_conditions = conditions + [f"{feat_name} > {thresh:.2f}"]
+                recurse(children_right[node], right_conditions)
+
+    recurse(0, [])
+    return rules
+
+# Fungsi untuk mengekstrak aturan dari Random Forest (ensemble)
+def extract_rules_from_forest(rf_model, feature_names, class_names):
+    rules = []
+    for idx, estimator in enumerate(rf_model.estimators_):  # Tidak perlu batasi jumlah pohon di sini
+        tree_rules = extract_rules(estimator, feature_names, class_names)
+        rules.extend(tree_rules)
     return rules
 
 @app.route('/get_all_data', methods=['GET'])
@@ -344,9 +349,12 @@ def process():
         joblib.dump(rf_model, model_filename)
         
         # Ekstrak aturan dengan format TRUE/FALSE
+        # Get column names from the original data
+        column_names = data.columns.tolist()
+
         feature_names = X.columns.tolist()
         class_names = label_encoder.classes_.tolist()
-        rules = extract_rules(rf_model, feature_names, class_names)
+        rules = extract_rules_from_forest(rf_model, feature_names, class_names)
         rules_json_filename = os.path.join(MODEL_DIR, 'rules.json')
         with open(rules_json_filename, 'w') as f:
             json.dump(rules, f, indent=4)
@@ -404,7 +412,8 @@ def process():
                 "test": test_evaluation
             },
             "rules": rules,  # Aturan dalam format TRUE/FALSE
-            "visualization": visualization_url  # URL ke gambar pohon keputusan
+            "visualization": visualization_url,  # URL ke gambar pohon keputusan
+            "column_names": column_names
         }
         return jsonify(response), 200
     
@@ -748,8 +757,6 @@ def web_predict_data_uji():
             # Hitung kategori prediksi
             if predicted_class == "Berprestasi":
                 counts["Berprestasi"] += 1
-            elif predicted_class == "Cukup Berprestasi":
-                counts["Cukup Berprestasi"] += 1
             elif predicted_class == "Tidak Berprestasi":
                 counts["Tidak Berprestasi"] += 1
 
@@ -758,7 +765,7 @@ def web_predict_data_uji():
             go.Bar(
                 x=list(counts.keys()),
                 y=list(counts.values()),
-                marker_color=["#007bff", "#ffc107", "#dc3545"]
+                marker_color=["#007bff", "#dc3545"]
             )
         ])
         fig.update_layout(title="Distribusi Prediksi Prestasi Siswa (20% Data Terakhir)", xaxis_title="Kategori", yaxis_title="Jumlah Siswa")
@@ -781,9 +788,17 @@ def web_index():
 @app.route('/web/process')
 def web_process():
     """
-    Halaman utama web yang menampilkan navigasi ke semua fungsi.
+    Halaman utama web yang menampilkan halaman process dengan data.
     """
-    return render_template('process.html')
+    # Panggil fungsi process untuk mendapatkan data
+    response, status_code = process()
+
+    if status_code == 200:
+        # Jika berhasil, render template dengan data dari respons
+        return render_template('process.html', **response)
+    else:
+        # Jika gagal, tampilkan pesan kesalahan
+        return render_template('process.html', error=response.get_json().get('error'))
 
 @app.route('/web/upload', methods=['GET', 'POST'])
 def web_upload():
