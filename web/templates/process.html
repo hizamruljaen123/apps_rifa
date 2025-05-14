@@ -4,6 +4,7 @@
 {% block title %}Halaman Utama{% endblock %}
 
 {% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 <style>
     body {
@@ -32,200 +33,193 @@
         max-height: 600px;
         overflow-y: auto;
     }
+    .confusion-matrix-plot {
+        width: 100%;
+        height: 400px;
+        margin: 0 auto;
+    }
+    .confusion-matrix-table {
+        margin-bottom: 1.5rem;
+    }
+    .confusion-matrix-table table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+    .confusion-matrix-table th,
+    .confusion-matrix-table td {
+        text-align: center;
+        padding: 0.75rem;
+    }
+    .confusion-section h6 {
+        color: #495057;
+        font-weight: 600;
+    }
+    .confusion-card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .js-plotly-plot {
+        margin: 0 auto;
+    }
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+    }
+    .tab button:hover {
+        background-color: #ddd;
+    }
+    .tab button.active {
+        background-color: #ccc;
+    }
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+    .comparison-container {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .comparison-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .comparison-value {
+        font-weight: bold;
+        color: #007bff;
+    }
+    .comparison-difference {
+        color: #28a745;
+    }
+    .comparison-negative {
+        color: #dc3545;
+    }
 </style>
+
 <div class="container-fluid">
     <h1 class="text-center mb-4">RANDOM FOREST SIMULATION</h1>
 
-    <!-- Form Persentase -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">Persentase Data Latih dan Uji</div>
-                <div class="card-body">
-                    <form id="percentageForm">
-                        <div class="form-group">
-                            <label for="trainPercentage">Persentase Data Latih:</label>
-                            <input type="range" class="form-control-range" id="trainPercentage" min="10" max="90" value="80" step="10">
-                            <span id="trainPercentageValue">80%</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="testPercentage">Persentase Data Uji:</label>
-                            <span id="testPercentageValue">20%</span>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Proses</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Tab Navigation -->
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'tab1')">Simulasi 1</button>
+        <button class="tablinks" onclick="openTab(event, 'tab2')">Simulasi 2</button>
+        <button class="tablinks" onclick="openTab(event, 'comparison')">Perbandingan</button>
     </div>
 
-
-    <div class="row">
-        <div class="col-md-12">
-            <br>
-            <div class="card">
-                <div class="card-header bg-success text-white">Data Set</div>
-                <div class="card-body">
-                    <div class="table-container">
-                        <table class="table table-bordered table-striped" id="trainDataTable">
-                            <thead>
-                                <tr>
-                                    <th>NO</th>
-                                    <th>NIS</th>
-                                    <th>NISN</th>
-                                    <th>Nama Siswa</th>
-                                    <th>PAI</th>
-                                    <th>PKn</th>
-                                    <th>BIN</th>
-                                    <th>MTK</th>
-                                    <th>SEI</th>
-                                    <th>BIG</th>
-                                    <th>SEB</th>
-                                    <th>PJOK</th>
-                                    <th>PRA</th>
-                                    <th>GEO</th>
-                                    <th>SEJ</th>
-                                    <th>Sos</th>
-                                    <th>Eko</th>
-                                    <th>Status Prestasi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="data-siswa">
-                                
-                            </tbody>
-                        </table>
+    <!-- Tab 1 Content -->
+    <div id="tab1" class="tabcontent" style="display: block;">
+        <!-- Form Persentase -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">Simulasi 1 - Persentase Data Latih dan Uji</div>
+                    <div class="card-body">
+                        <form id="percentageForm1">
+                            <div class="form-group">
+                                <label for="trainPercentage1">Persentase Data Latih:</label>
+                                <input type="range" class="form-control-range" id="trainPercentage1" min="10" max="90" value="80" step="5">
+                                <span id="trainPercentageValue1">80%</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="testPercentage1">Persentase Data Uji:</label>
+                                <span id="testPercentageValue1">20%</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Proses Simulasi 1</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-        
-    </div>
 
-    <!-- Tabel Data Latih dan Uji -->
-    <div class="row">
-        <div class="col-md-12">
-            <br>
-            <div class="card">
-                <div class="card-header bg-success text-white">Data Latih</div>
-                <div class="card-body">
-                    <div class="table-container">
-                        <table class="table table-bordered table-striped" id="trainDataTable">
-                            <thead>
-                                <tr>
-                                    <th>NO</th>
-                                    <th>NAMA SISWA</th>
-                                    <th>NISN</th>
-                                    <th>NIS</th>
-                                    <th>PAI</th>
-                                    <th>PKn</th>
-                                    <th>BIN</th>
-                                    <th>MTK</th>
-                                    <th>SEI</th>
-                                    <th>BIG</th>
-                                    <th>SEB</th>
-                                    <th>PJOK</th>
-                                    <th>PRA</th>
-                                    <th>GEO</th>
-                                    <th>SEJ</th>
-                                    <th>Sos</th>
-                                    <th>Eko</th>
-                                    <th>Status Prestasi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="hasil-prerdiksi">
-
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <br>
-            <div class="card">
-                <div class="card-header bg-info text-white">Data Uji (Hasil Prediksi)</div>
-                <div class="card-body">
-                    <div class="table-container">
-                        <table class="table table-bordered table-striped" id="testDataTable">
-                            <thead>
-                                <tr>
-                                    <th>Nama Siswa</th>
-                                    <th>NIS</th>
-                                    <th>Hasil Prediksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="hasil-prediksi-data-uji"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grafik Distribusi -->
-    <div class="row">
-        <div class="col-md-6">
-            <br>
-            <div class="card">
-                <div class="card-header bg-danger text-white">Grafik Distribusi Data Latih</div>
-                <div class="card-body">
-                    <canvas id="trainChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <br>
-            <div class="card">
-                <div class="card-header bg-danger text-white">Grafik Distribusi Data Uji</div>
-                <div class="card-body">
-                    <canvas id="testChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Evaluasi Model dan Rules -->
-    <div class="row">
-        <div class="col-md-12">
-            <br>
-            <div class="card">
-                <div class="card-header bg-warning text-white">Hasil Evaluasi Model</div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <h5>Data Latih</h5>
-                            <table class="table table-bordered" id="trainEvaluationTable">
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-success text-white">Data Set</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="trainDataTable1">
                                 <thead>
                                     <tr>
-                                        <th>Metrik</th>
-                                        <th>Nilai</th>
+                                        <th>NO</th>
+                                        <th>NIS</th>
+                                        <th>NISN</th>
+                                        <th>Nama Siswa</th>
+                                        <th>PAI</th>
+                                        <th>PKn</th>
+                                        <th>BIN</th>
+                                        <th>MTK</th>
+                                        <th>SEI</th>
+                                        <th>BIG</th>
+                                        <th>SEB</th>
+                                        <th>PJOK</th>
+                                        <th>PRA</th>
+                                        <th>GEO</th>
+                                        <th>SEJ</th>
+                                        <th>Sos</th>
+                                        <th>Eko</th>
+                                        <th>Status Prestasi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr><td>Accuracy</td><td id="trainAccuracy">-</td></tr>
-                                    <tr><td>Precision</td><td id="trainPrecision">-</td></tr>
-                                    <tr><td>Recall</td><td id="trainRecall">-</td></tr>
-                                    <tr><td>F1-Score</td><td id="trainF1">-</td></tr>
+                                <tbody id="data-siswa1">
+                                    
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-6">
-                            <h5>Data Uji</h5>
-                            <table class="table table-bordered" id="testEvaluationTable">
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Tabel Data Latih dan Uji -->
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-success text-white">Data Latih</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="trainDataTable1">
                                 <thead>
                                     <tr>
-                                        <th>Metrik</th>
-                                        <th>Nilai</th>
+                                        <th>NO</th>
+                                        <th>NAMA SISWA</th>
+                                        <th>NISN</th>
+                                        <th>NIS</th>
+                                        <th>PAI</th>
+                                        <th>PKn</th>
+                                        <th>BIN</th>
+                                        <th>MTK</th>
+                                        <th>SEI</th>
+                                        <th>BIG</th>
+                                        <th>SEB</th>
+                                        <th>PJOK</th>
+                                        <th>PRA</th>
+                                        <th>GEO</th>
+                                        <th>SEJ</th>
+                                        <th>Sos</th>
+                                        <th>Eko</th>
+                                        <th>Status Prestasi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr><td>Accuracy</td><td id="testAccuracy">-</td></tr>
-                                    <tr><td>Precision</td><td id="testPrecision">-</td></tr>
-                                    <tr><td>Recall</td><td id="testRecall">-</td></tr>
-                                    <tr><td>F1-Score</td><td id="testF1">-</td></tr>
+                                <tbody id="hasil-prerdiksi1">
+
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -233,278 +227,951 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <br>
-            <div class="card">
-                <div class="card-header bg-secondary text-white">Aturan yang Dihasilkan</div>
-                <div class="card-body">
-                    <textarea rows="20" class="form-control" id="rulesTextarea" readonly></textarea>
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-info text-white">Data Uji (Hasil Prediksi)</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="testDataTable1">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Siswa</th>
+                                        <th>NIS</th>
+                                        <th>Hasil Prediksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hasil-prediksi-data-uji1"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik Distribusi -->
+        <div class="row">
+            <div class="col-md-6">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-danger text-white">Grafik Distribusi Data Latih</div>
+                    <div class="card-body">
+                        <canvas id="trainChart1" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-danger text-white">Grafik Distribusi Data Uji</div>
+                    <div class="card-body">
+                        <canvas id="testChart1" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluasi Model dan Rules -->
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-warning text-white">Hasil Evaluasi Model</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <h5 class="col-12 mb-4">Metrik Evaluasi</h5>
+                            <div class="col-6">
+                                <h5>Data Latih</h5>
+                                <table class="table table-bordered" id="trainEvaluationTable1">
+                                    <thead>
+                                        <tr>
+                                            <th>Metrik</th>
+                                            <th>Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Accuracy</td><td id="trainAccuracy1">-</td></tr>
+                                        <tr><td>Precision</td><td id="trainPrecision1">-</td></tr>
+                                        <tr><td>Recall</td><td id="trainRecall1">-</td></tr>
+                                        <tr><td>F1-Score</td><td id="trainF11">-</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h5>Data Uji</h5>
+                                <table class="table table-bordered" id="testEvaluationTable1">
+                                    <thead>
+                                        <tr>
+                                            <th>Metrik</th>
+                                            <th>Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Accuracy</td><td id="testAccuracy1">-</td></tr>
+                                        <tr><td>Precision</td><td id="testPrecision1">-</td></tr>
+                                        <tr><td>Recall</td><td id="testRecall1">-</td></tr>
+                                        <tr><td>F1-Score</td><td id="testF11">-</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Confusion Matrix Section -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Confusion Matrix Analysis</h5>
+                            </div>
+                            <div class="col-12">
+                                <div class="card" style="padding:5%">
+                                     <!-- Tables Section -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <h6 class="mb-3">Training Data Results</h6>
+                                                <div class="table-responsive confusion-matrix-table">
+                                                    <table class="table table-bordered" id="confusionMatrix1_train">
+                                                        <tbody>
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="mb-3">Test Data Results</h6>
+                                                <div class="table-responsive confusion-matrix-table">
+                                                    <table class="table table-bordered" id="confusionMatrix1_test">
+                                                        <tbody>
+                                                            <!-- Will be populated by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Plots Section -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6 class="mb-3">Training Data Visualization</h6>
+                                                <div id="confusionMatrixPlot1_train" class="confusion-matrix-plot"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="mb-3">Test Data Visualization</h6>
+                                                <div id="confusionMatrixPlot1_test" class="confusion-matrix-plot"></div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Aturan yang Dihasilkan</div>
+                    <div class="card-body">
+                        <textarea rows="20" class="form-control" id="rulesTextarea1" readonly></textarea>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
+    <!-- Tab 2 Content -->
+    <div id="tab2" class="tabcontent">
+        <!-- Form Persentase -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">Simulasi 2 - Persentase Data Latih dan Uji</div>
+                    <div class="card-body">
+                        <form id="percentageForm2">
+                            <div class="form-group">
+                                <label for="trainPercentage2">Persentase Data Latih:</label>
+                                <input type="range" class="form-control-range" id="trainPercentage2" min="10" max="90" value="70" step="5">
+                                <span id="trainPercentageValue2">70%</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="testPercentage2">Persentase Data Uji:</label>
+                                <span id="testPercentageValue2">30%</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Proses Simulasi 2</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-success text-white">Data Set</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="trainDataTable2">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NIS</th>
+                                        <th>NISN</th>
+                                        <th>Nama Siswa</th>
+                                        <th>PAI</th>
+                                        <th>PKn</th>
+                                        <th>BIN</th>
+                                        <th>MTK</th>
+                                        <th>SEI</th>
+                                        <th>BIG</th>
+                                        <th>SEB</th>
+                                        <th>PJOK</th>
+                                        <th>PRA</th>
+                                        <th>GEO</th>
+                                        <th>SEJ</th>
+                                        <th>Sos</th>
+                                        <th>Eko</th>
+                                        <th>Status Prestasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-siswa2">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Tabel Data Latih dan Uji -->
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-success text-white">Data Latih</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="trainDataTable2">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NAMA SISWA</th>
+                                        <th>NISN</th>
+                                        <th>NIS</th>
+                                        <th>PAI</th>
+                                        <th>PKn</th>
+                                        <th>BIN</th>
+                                        <th>MTK</th>
+                                        <th>SEI</th>
+                                        <th>BIG</th>
+                                        <th>SEB</th>
+                                        <th>PJOK</th>
+                                        <th>PRA</th>
+                                        <th>GEO</th>
+                                        <th>SEJ</th>
+                                        <th>Sos</th>
+                                        <th>Eko</th>
+                                        <th>Status Prestasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hasil-prerdiksi2">
+
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-info text-white">Data Uji (Hasil Prediksi)</div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped" id="testDataTable2">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Siswa</th>
+                                        <th>NIS</th>
+                                        <th>Hasil Prediksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hasil-prediksi-data-uji2"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafik Distribusi -->
+        <div class="row">
+            <div class="col-md-6">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-danger text-white">Grafik Distribusi Data Latih</div>
+                    <div class="card-body">
+                        <canvas id="trainChart2" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-danger text-white">Grafik Distribusi Data Uji</div>
+                    <div class="card-body">
+                        <canvas id="testChart2" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluasi Model dan Rules -->
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-warning text-white">Hasil Evaluasi Model</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <h5 class="col-12 mb-4">Metrik Evaluasi</h5>
+                            <div class="col-6">
+                                <h5>Data Latih</h5>
+                                <table class="table table-bordered" id="trainEvaluationTable2">
+                                    <thead>
+                                        <tr>
+                                            <th>Metrik</th>
+                                            <th>Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Accuracy</td><td id="trainAccuracy2">-</td></tr>
+                                        <tr><td>Precision</td><td id="trainPrecision2">-</td></tr>
+                                        <tr><td>Recall</td><td id="trainRecall2">-</td></tr>
+                                        <tr><td>F1-Score</td><td id="trainF12">-</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h5>Data Uji</h5>
+                                <table class="table table-bordered" id="testEvaluationTable2">
+                                    <thead>
+                                        <tr>
+                                            <th>Metrik</th>
+                                            <th>Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Accuracy</td><td id="testAccuracy2">-</td></tr>
+                                        <tr><td>Precision</td><td id="testPrecision2">-</td></tr>
+                                        <tr><td>Recall</td><td id="testRecall2">-</td></tr>
+                                        <tr><td>F1-Score</td><td id="testF12">-</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Confusion Matrix Section -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Confusion Matrix Analysis</h5>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <span>Confusion Matrix Results</span>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Tables Section -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Training Data Results</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="confusionMatrix2_train">
+                                                    <tbody>
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Test Data Results</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="confusionMatrix2_test">
+                                                    <tbody>
+                                                        <!-- Will be populated by JavaScript -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Plots Section -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Training Data Visualization</h6>
+                                            <div id="confusionMatrixPlot2_train"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Test Data Visualization</h6>
+                                            <div id="confusionMatrixPlot2_test"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <br>
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">Aturan yang Dihasilkan</div>
+                    <div class="card-body">
+                        <textarea rows="20" class="form-control" id="rulesTextarea2" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Tab -->
+    <div id="comparison" class="tabcontent">
+        <div class="comparison-container">
+            <h3 class="text-center mb-4">Perbandingan Hasil Simulasi</h3>
+            
+            <!-- Data Latih Comparison -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">Perbandingan Data Latih</div>
+                <div class="card-body">
+                    <div class="comparison-row">
+                        <span>Accuracy:</span>
+                        <div>
+                            <span class="comparison-value" id="trainAccuracy1">-</span> vs 
+                            <span class="comparison-value" id="trainAccuracy2">-</span>
+                            <span class="comparison-difference" id="trainAccuracyDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Precision:</span>
+                        <div>
+                            <span class="comparison-value" id="trainPrecision1">-</span> vs 
+                            <span class="comparison-value" id="trainPrecision2">-</span>
+                            <span class="comparison-difference" id="trainPrecisionDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Recall:</span>
+                        <div>
+                            <span class="comparison-value" id="trainRecall1">-</span> vs 
+                            <span class="comparison-value" id="trainRecall2">-</span>
+                            <span class="comparison-difference" id="trainRecallDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>F1-Score:</span>
+                        <div>
+                            <span class="comparison-value" id="trainF11">-</span> vs 
+                            <span class="comparison-value" id="trainF12">-</span>
+                            <span class="comparison-difference" id="trainF1Diff"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Uji Comparison -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">Perbandingan Data Uji</div>
+                <div class="card-body">
+                    <div class="comparison-row">
+                        <span>Accuracy:</span>
+                        <div>
+                            <span class="comparison-value" id="testAccuracy1">-</span> vs 
+                            <span class="comparison-value" id="testAccuracy2">-</span>
+                            <span class="comparison-difference" id="testAccuracyDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Precision:</span>
+                        <div>
+                            <span class="comparison-value" id="testPrecision1">-</span> vs 
+                            <span class="comparison-value" id="testPrecision2">-</span>
+                            <span class="comparison-difference" id="testPrecisionDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Recall:</span>
+                        <div>
+                            <span class="comparison-value" id="testRecall1">-</span> vs 
+                            <span class="comparison-value" id="testRecall2">-</span>
+                            <span class="comparison-difference" id="testRecallDiff"></span>
+                        </div>
+                    </div>
+                    <div class="comparison-row">
+                        <span>F1-Score:</span>
+                        <div>
+                            <span class="comparison-value" id="testF11">-</span> vs 
+                            <span class="comparison-value" id="testF12">-</span>
+                            <span class="comparison-difference" id="testF1Diff"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribution Comparison -->
+            <div class="card">
+                <div class="card-header bg-info text-white">Perbandingan Distribusi</div>
+                <div class="card-body">
+                    <canvas id="comparisonChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script>
-    // Update nilai persentase uji berdasarkan slider
-    const trainSlider = document.getElementById('trainPercentage');
-    const trainValue = document.getElementById('trainPercentageValue');
-    const testValue = document.getElementById('testPercentageValue');
 
-    trainSlider.addEventListener('input', function() {
+<script>
+    // Tab functionality
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+
+        // Destroy all charts when switching tabs to prevent canvas reuse issues
+        // Clean up Chart.js charts
+        if (trainChart1) {
+            trainChart1.destroy();
+            trainChart1 = null;
+        }
+        if (testChart1) {
+            testChart1.destroy();
+            testChart1 = null;
+        }
+        if (trainChart2) {
+            trainChart2.destroy();
+            trainChart2 = null;
+        }
+        if (testChart2) {
+            testChart2.destroy();
+            testChart2 = null;
+        }
+        if (comparisonChart) {
+            comparisonChart.destroy();
+            comparisonChart = null;
+        }
+
+        // Clean up Plotly charts
+        const plotIds = [
+            'confusionMatrixPlot1_train',
+            'confusionMatrixPlot1_test',
+            'confusionMatrixPlot2_train',
+            'confusionMatrixPlot2_test'
+        ];
+        
+        plotIds.forEach(id => {
+            const plotElement = document.getElementById(id);
+            if (plotElement) {
+                Plotly.purge(plotElement);
+            }
+        });
+        if (confusionMatrixChart1) {
+            confusionMatrixChart1.destroy();
+            confusionMatrixChart1 = null;
+        }
+        if (confusionMatrixChart2) {
+            confusionMatrixChart2.destroy();
+            confusionMatrixChart2 = null;
+        }
+    }
+
+    // Update nilai persentase uji berdasarkan slider untuk Tab 1
+    const trainSlider1 = document.getElementById('trainPercentage1');
+    const trainValue1 = document.getElementById('trainPercentageValue1');
+    const testValue1 = document.getElementById('testPercentageValue1');
+
+    trainSlider1.addEventListener('input', function() {
         const trainPercentage = this.value;
         const testPercentage = 100 - trainPercentage;
-        trainValue.textContent = `${trainPercentage}%`;
-        testValue.textContent = `${testPercentage}%`;
+        trainValue1.textContent = `${trainPercentage}%`;
+        testValue1.textContent = `${testPercentage}%`;
     });
 
-    // Inisialisasi Chart.js untuk Data Latih
-    const trainCtx = document.getElementById('trainChart').getContext('2d');
-    let trainChart = new Chart(trainCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Berprestasi', 'Tidak Berprestasi'],
-            datasets: [{
-                label: 'Jumlah Siswa',
-                data: [0, 0],
-                backgroundColor: ['#28a745', '#dc3545'],
-                borderColor: ['#28a745', '#dc3545'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Jumlah Siswa' } }
+    // Update nilai persentase uji berdasarkan slider untuk Tab 2
+    const trainSlider2 = document.getElementById('trainPercentage2');
+    const trainValue2 = document.getElementById('trainPercentageValue2');
+    const testValue2 = document.getElementById('testPercentageValue2');
+
+    trainSlider2.addEventListener('input', function() {
+        const trainPercentage = this.value;
+        const testPercentage = 100 - trainPercentage;
+        trainValue2.textContent = `${trainPercentage}%`;
+        testValue2.textContent = `${testPercentage}%`;
+    });
+
+    // Handle submit form untuk Tab 1
+    $('#percentageForm1').on('submit', function(e) {
+        e.preventDefault();
+        const trainPercentage = $('#trainPercentage1').val();
+        processData(trainPercentage, '1');
+    });
+
+    // Handle submit form untuk Tab 2
+    $('#percentageForm2').on('submit', function(e) {
+        e.preventDefault();
+        const trainPercentage = $('#trainPercentage2').val();
+        processData(trainPercentage, '2');
+    });
+
+    // Fungsi untuk memproses data
+    function processData(trainPercentage, tabNumber) {
+        $.ajax({
+            url: 'http://localhost:5000/process',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ train_percentage: parseInt(trainPercentage) }),
+            success: function(response) {
+                // Update UI untuk tab yang sesuai
+                updateUI(response, tabNumber);
             },
-            plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Distribusi Status Prestasi Data Latih' }
+            error: function(xhr) {
+                alert('Error: ' + xhr.responseJSON.error);
             }
-        }
-    });
+        });
+    }
 
-    // Inisialisasi Chart.js untuk Data Uji
-    const testCtx = document.getElementById('testChart').getContext('2d');
-    let testChart = new Chart(testCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Berprestasi', 'Tidak Berprestasi'],
-            datasets: [{
-                label: 'Jumlah Siswa',
-                data: [0, 0],
-                backgroundColor: ['#28a745', '#dc3545'],
-                borderColor: ['#28a745', '#dc3545'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Jumlah Siswa' } }
-            },
-            plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Distribusi Hasil Prediksi Data Uji' }
-            }
-        }
-    });
-
-    // Handle submit form
-    $('#percentageForm').on('submit', function(e) {
-    e.preventDefault();
-    const trainPercentage = $('#trainPercentage').val();
-
-    $.ajax({
-        url: 'http://localhost:5000/process',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ train_percentage: parseInt(trainPercentage) }),
-        success: function(response) {
-            // Update Tabel Data Siswa
-            const allData = response.training_data;
-            const columnNames = response.column_names;
-            let dataHtml = '';
-            const dataSiswaTbody = document.getElementById('data-siswa');
-            dataSiswaTbody.innerHTML = '';
-            allData.forEach(siswa => {
-                const row = document.createElement('tr');
-                columnNames.forEach(column => {
-                    const cell = document.createElement('td');
-                    cell.textContent = siswa[column] || 'N/A';
-                    row.appendChild(cell);
-                });
-                dataSiswaTbody.appendChild(row);
-            });
-
-            // Update Evaluasi Model
-            const trainEval = response.evaluation.train;
-            const testEval = response.evaluation.test;
-            $('#trainAccuracy').text(trainEval.accuracy.toFixed(2));
-            $('#trainPrecision').text(trainEval.precision.toFixed(2));
-            $('#trainRecall').text(trainEval.recall.toFixed(2));
-            $('#trainF1').text(trainEval.f1_score.toFixed(2));
-            $('#testAccuracy').text(testEval.accuracy.toFixed(2));
-            $('#testPrecision').text(testEval.precision.toFixed(2));
-            $('#testRecall').text(testEval.recall.toFixed(2));
-            $('#testF1').text(testEval.f1_score.toFixed(2));
-
-            // Update Data Latih Table
-            const trainingData = response.training_data;
-            const hasilPrediksiTbody = document.getElementById('hasil-prerdiksi');
-            hasilPrediksiTbody.innerHTML = '';
-            trainingData.forEach(data => {
-                const row = document.createElement('tr');
-                columnNames.forEach(column => {
-                    const cell = document.createElement('td');
-                    cell.textContent = data[column] || 'N/A';
-                    row.appendChild(cell);
-                });
-                hasilPrediksiTbody.appendChild(row);
-            });
-
-            // Update Data Uji Table
-            const predictions = response.predictions;
-            const hasilPrediksiDataUjiTbody = document.getElementById('hasil-prediksi-data-uji');
-            hasilPrediksiDataUjiTbody.innerHTML = '';
-            predictions.forEach(prediction => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${prediction['NAMA SISWA']}</td>
-                    <td>${prediction['NIS']}</td>
-                    <td>${prediction['Hasil Prediksi']}</td>
+    // Fungsi untuk update confusion matrix
+    function updateConfusionMatrix(response, tabNumber) {
+        // Update confusion matrix tables
+        function updateConfusionTable(data, tableId) {
+            const tableBody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+            
+            // Add header row
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <th>Actual ↓ / Predicted →</th>
+                <th>Tidak Berprestasi</th>
+                <th>Berprestasi</th>
+            `;
+            tableBody.appendChild(headerRow);
+            
+            // Add data rows
+            const labels = ["Tidak Berprestasi", "Berprestasi"];
+            data.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <th>${labels[i]}</th>
+                    ${row.map(val => `<td>${val}</td>`).join('')}
                 `;
-                hasilPrediksiDataUjiTbody.appendChild(row);
+                tableBody.appendChild(tr);
             });
-
-            // Hitung frekuensi dan persentase untuk Data Latih
-            let trainBerprestasi = 0;
-            let trainTidakBerprestasi = 0;
-            let trainCukupBerprestasi = 0; // Jika ada kategori lain
-            const trainTotal = allData.length;
-
-            allData.forEach(item => {
-                const status = item['Status Prestasi'].toLowerCase();
-                console.log(status);
-                if (status === 'berprestasi') {
-                    trainBerprestasi++;
-                } else if (status === 'tidak berprestasi') {
-                    trainTidakBerprestasi++;
-                } else if (status === 'cukup berprestasi') {
-                    trainCukupBerprestasi++;
-                }
-            });
-
-            const trainBerprestasiPct = allData.length > 0 ? (trainBerprestasi / allData.length * 100).toFixed(2) : 0;
-            const trainTidakBerprestasiPct = allData.length > 0 ? (trainTidakBerprestasi / allData.length * 100).toFixed(2) : 0;
-            const trainCukupBerprestasiPct = allData.length > 0 ? (trainCukupBerprestasi / allData.length * 100).toFixed(2) : 0;
-
-            trainChart.data.labels = ['Berprestasi', 'Tidak Berprestasi'];
-            trainChart.data.datasets[0].data = [trainBerprestasi, trainTidakBerprestasi];
-            trainChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545'];
-            trainChart.options.plugins.datalabels = {
-                display: true,
-                formatter: (value, context) => {
-                    const pct = allData.length > 0 ? (value / allData.length * 100).toFixed(2) : 0;
-                    return `${value} (${pct}%)`;
-                },
-                color: '#fff',
-                anchor: 'end',
-                align: 'start'
-            };
-            if (trainChart) {
-                trainChart.update();
-            }
-
-            // Hitung frekuensi dan persentase untuk Data Uji
-            let testBerprestasi = 0;
-            let testTidakBerprestasi = 0;
-            let testCukupBerprestasi = 0; // Jika ada kategori lain
-            const testTotal = predictions.length;
-
-            predictions.forEach(item => {
-                const status = item['Hasil Prediksi'].toLowerCase();
-                if (status === 'berprestasi') {
-                    testBerprestasi++;
-                } else if (status ==='tidak berprestasi') {
-                    testTidakBerprestasi++;
-                } else if (status === 'cukup berprestasi') {
-                    testCukupBerprestasi++;
-                }
-            });
-
-            const testBerprestasiPct = testTotal > 0 ? (testBerprestasi / testTotal * 100).toFixed(2) : 0;
-            const testTidakBerprestasiPct = testTotal > 0 ? (testTidakBerprestasi / testTotal * 100).toFixed(2) : 0;
-            const testCukupBerprestasiPct = testTotal > 0 ? (testCukupBerprestasi / testTotal * 100).toFixed(2) : 0;
-
-            testChart.data.labels = ['Berprestasi', 'Tidak Berprestasi'];
-            testChart.data.datasets[0].data = [testBerprestasi, testTidakBerprestasi];
-            testChart.data.datasets[0].backgroundColor = ['#28a745', '#dc3545']; // Hijau, Merah, Kuning
-            testChart.options.plugins.datalabels = {
-                display: true,
-                formatter: (value, context) => {
-                    const pct = testTotal > 0 ? (value / testTotal * 100).toFixed(2) : 0;
-                    return `${value} (${pct}%)`;
-                },
-                color: '#fff',
-                anchor: 'end',
-                align: 'start'
-            };
-            if (testChart) {
-                testChart.update();
-            }
-
-            // Debugging: Log jumlah dan data
-            console.log('Train Data:', { Berprestasi: trainBerprestasi, TidakBerprestasi: trainTidakBerprestasi, CukupBerprestasi: trainCukupBerprestasi, Total: trainTotal });
-            console.log('Test Data:', { Berprestasi: testBerprestasi, TidakBerprestasi: testTidakBerprestasi, CukupBerprestasi: testCukupBerprestasi, Total: testTotal });
-
-            // Update Rules Textarea
-            const rules = response.rules.join('\n');
-            $('#rulesTextarea').val(rules);
-
-        },
-        error: function(xhr) {
-            alert('Error: ' + xhr.responseJSON.error);
         }
-    });
-});
 
-async function tampilkanDataSiswa() {
-    try {
-        const response = await fetch('http://127.0.0.1:5000/get_all_data');
-        const data = await response.json();
+        // Update tables
+        updateConfusionTable(response.evaluation.confusion_matrix.train, `confusionMatrix${tabNumber}_train`);
+        updateConfusionTable(response.evaluation.confusion_matrix.test, `confusionMatrix${tabNumber}_test`);
 
-        const tbody = document.getElementById('data-siswa');
-        tbody.innerHTML = ''; // Kosongkan isi tbody sebelum menambahkan data baru
+        // Plot confusion matrices
+        const trainPlotData = response.confusion_matrix_plots.train;
+        const testPlotData = response.confusion_matrix_plots.test;
+        
+        Plotly.newPlot(`confusionMatrixPlot${tabNumber}_train`, JSON.parse(trainPlotData));
+        Plotly.newPlot(`confusionMatrixPlot${tabNumber}_test`, JSON.parse(testPlotData));
+    }
 
-        data.all_data.forEach(siswa => {
+    // Fungsi untuk mengupdate UI
+    function updateUI(response, tabNumber) {
+        // Update Tabel Data Siswa
+        const allData = response.training_data;
+        const columnNames = response.column_names;
+        const dataSiswaTbody = document.getElementById(`data-siswa${tabNumber}`);
+        dataSiswaTbody.innerHTML = '';
+        allData.forEach(siswa => {
+            const row = document.createElement('tr');
+            columnNames.forEach(column => {
+                const cell = document.createElement('td');
+                cell.textContent = siswa[column] || 'N/A';
+                row.appendChild(cell);
+            });
+            dataSiswaTbody.appendChild(row);
+        });
+
+        // Update Evaluasi Model
+        const trainEval = response.evaluation.train;
+        const testEval = response.evaluation.test;
+        $(`#trainAccuracy${tabNumber}`).text(trainEval.accuracy.toFixed(2));
+        $(`#trainPrecision${tabNumber}`).text(trainEval.precision.toFixed(2));
+        $(`#trainRecall${tabNumber}`).text(trainEval.recall.toFixed(2));
+        $(`#trainF1${tabNumber}`).text(trainEval.f1_score.toFixed(2));
+        $(`#testAccuracy${tabNumber}`).text(testEval.accuracy.toFixed(2));
+        $(`#testPrecision${tabNumber}`).text(testEval.precision.toFixed(2));
+        $(`#testRecall${tabNumber}`).text(testEval.recall.toFixed(2));
+        $(`#testF1${tabNumber}`).text(testEval.f1_score.toFixed(2));
+
+        // Update Data Latih Table
+        const trainingData = response.training_data;
+        const hasilPrediksiTbody = document.getElementById(`hasil-prerdiksi${tabNumber}`);
+        hasilPrediksiTbody.innerHTML = '';
+        trainingData.forEach(data => {
+            const row = document.createElement('tr');
+            columnNames.forEach(column => {
+                const cell = document.createElement('td');
+                cell.textContent = data[column] || 'N/A';
+                row.appendChild(cell);
+            });
+            hasilPrediksiTbody.appendChild(row);
+        });
+
+        // Update Data Uji Table
+        const predictions = response.predictions;
+        const hasilPrediksiDataUjiTbody = document.getElementById(`hasil-prediksi-data-uji${tabNumber}`);
+        hasilPrediksiDataUjiTbody.innerHTML = '';
+        predictions.forEach(prediction => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${siswa.NO}</td>
-                <td>${siswa.NIS}</td>
-                <td>${siswa.NISN}</td>
-                <td>${siswa['NAMA SISWA']}</td>
-                <td>${siswa.PAI}</td>
-                <td>${siswa.PKn}</td>
-                <td>${siswa.BIN}</td>
-                <td>${siswa.MTK}</td>
-                <td>${siswa.SEI}</td>
-                <td>${siswa.BIG}</td>
-                <td>${siswa.SEB}</td>
-                <td>${siswa.PJOK}</td>
-                <td>${siswa.PRA}</td>
-                <td>${siswa.GEO}</td>
-                <td>${siswa.SEJ}</td>
-                <td>${siswa.Sos}</td>
-                <td>${siswa.Eko}</td>
-                <td>${siswa['Status Prestasi']}</td>
+                <td>${prediction['NAMA SISWA']}</td>
+                <td>${prediction['NIS']}</td>
+                <td>${prediction['Hasil Prediksi']}</td>
             `;
-            tbody.appendChild(row);
+            hasilPrediksiDataUjiTbody.appendChild(row);
         });
-    } catch (error) {
-        console.error('Terjadi kesalahan:', error);
-    }
-}
 
-tampilkanDataSiswa();
+        // Update Charts
+        updateCharts(response, tabNumber);
+
+        // Update Rules Textarea
+        const rules = response.rules.join('\n');
+        $(`#rulesTextarea${tabNumber}`).val(rules);
+
+        // Update confusion matrix
+        updateConfusionMatrix(response, tabNumber);
+
+        // Update comparison setelah data diupdate
+        updateComparison();
+    }
+
+    // Fungsi untuk mengupdate charts
+    function updateCharts(response, tabNumber) {
+        const allData = response.training_data;
+        const predictions = response.predictions;
+
+        // Destroy existing charts for the current tab
+        if (tabNumber === '1') {
+            if (trainChart1) trainChart1.destroy();
+            if (testChart1) testChart1.destroy();
+        } else if (tabNumber === '2') {
+            if (trainChart2) trainChart2.destroy();
+            if (testChart2) testChart2.destroy();
+        }
+
+        // Update Train Chart
+        let trainBerprestasi = 0;
+        let trainTidakBerprestasi = 0;
+        allData.forEach(item => {
+            const status = item['Status Prestasi'].toLowerCase();
+            if (status === 'berprestasi') {
+                trainBerprestasi++;
+            } else if (status === 'tidak berprestasi') {
+                trainTidakBerprestasi++;
+            }
+        });
+
+        const trainCtx = document.getElementById(`trainChart${tabNumber}`).getContext('2d');
+        const newTrainChart = new Chart(trainCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Berprestasi', 'Tidak Berprestasi'],
+                datasets: [{
+                    label: 'Jumlah Siswa',
+                    data: [trainBerprestasi, trainTidakBerprestasi],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderColor: ['#28a745', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Jumlah Siswa' } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Distribusi Status Prestasi Data Latih' }
+                }
+            }
+        });
+
+        // Update Test Chart
+        let testBerprestasi = 0;
+        let testTidakBerprestasi = 0;
+        predictions.forEach(item => {
+            const status = item['Hasil Prediksi'].toLowerCase();
+            if (status === 'berprestasi') {
+                testBerprestasi++;
+            } else if (status === 'tidak berprestasi') {
+                testTidakBerprestasi++;
+            }
+        });
+
+        const testCtx = document.getElementById(`testChart${tabNumber}`).getContext('2d');
+        const newTestChart = new Chart(testCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Berprestasi', 'Tidak Berprestasi'],
+                datasets: [{
+                    label: 'Jumlah Siswa',
+                    data: [testBerprestasi, testTidakBerprestasi],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderColor: ['#28a745', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Jumlah Siswa' } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Distribusi Hasil Prediksi Data Uji' }
+                }
+            }
+        });
+        // Store the new chart references
+        if (tabNumber === '1') {
+            trainChart1 = newTrainChart;
+            testChart1 = newTestChart;
+        } else if (tabNumber === '2') {
+            trainChart2 = newTrainChart;
+            testChart2 = newTestChart;
+        }
+    }
+
+    // Store chart instances
+    let trainChart1 = null;
+    let testChart1 = null;
+    let trainChart2 = null;
+    let testChart2 = null;
+    let comparisonChart = null;
+    let confusionMatrixChart1 = null;
+    let confusionMatrixChart2 = null;
+
+    // Fungsi untuk menghitung dan menampilkan perbandingan
+    function updateComparison() {
+        // Data Latih Comparison
+        const trainAccuracy1 = parseFloat($('#trainAccuracy1').text());
+        const trainAccuracy2 = parseFloat($('#trainAccuracy2').text());
+        const trainAccuracyDiff = trainAccuracy1 - trainAccuracy2;
+        $('#trainAccuracyDiff').text(`(${trainAccuracyDiff.toFixed(2)})`).toggleClass('comparison-negative', trainAccuracyDiff < 0);
+
+        const trainPrecision1 = parseFloat($('#trainPrecision1').text());
+        const trainPrecision2 = parseFloat($('#trainPrecision2').text());
+        const trainPrecisionDiff = trainPrecision1 - trainPrecision2;
+        $('#trainPrecisionDiff').text(`(${trainPrecisionDiff.toFixed(2)})`).toggleClass('comparison-negative', trainPrecisionDiff < 0);
+
+        const trainRecall1 = parseFloat($('#trainRecall1').text());
+        const trainRecall2 = parseFloat($('#trainRecall2').text());
+        const trainRecallDiff = trainRecall1 - trainRecall2;
+        $('#trainRecallDiff').text(`(${trainRecallDiff.toFixed(2)})`).toggleClass('comparison-negative', trainRecallDiff < 0);
+
+        const trainF11 = parseFloat($('#trainF11').text());
+        const trainF12 = parseFloat($('#trainF12').text());
+        const trainF1Diff = trainF11 - trainF12;
+        $('#trainF1Diff').text(`(${trainF1Diff.toFixed(2)})`).toggleClass('comparison-negative', trainF1Diff < 0);
+
+        // Data Uji Comparison
+        const testAccuracy1 = parseFloat($('#testAccuracy1').text());
+        const testAccuracy2 = parseFloat($('#testAccuracy2').text());
+        const testAccuracyDiff = testAccuracy1 - testAccuracy2;
+        $('#testAccuracyDiff').text(`(${testAccuracyDiff.toFixed(2)})`).toggleClass('comparison-negative', testAccuracyDiff < 0);
+
+        const testPrecision1 = parseFloat($('#testPrecision1').text());
+        const testPrecision2 = parseFloat($('#testPrecision2').text());
+        const testPrecisionDiff = testPrecision1 - testPrecision2;
+        $('#testPrecisionDiff').text(`(${testPrecisionDiff.toFixed(2)})`).toggleClass('comparison-negative', testPrecisionDiff < 0);
+
+        const testRecall1 = parseFloat($('#testRecall1').text());
+        const testRecall2 = parseFloat($('#testRecall2').text());
+        const testRecallDiff = testRecall1 - testRecall2;
+        $('#testRecallDiff').text(`(${testRecallDiff.toFixed(2)})`).toggleClass('comparison-negative', testRecallDiff < 0);
+
+        const testF11 = parseFloat($('#testF11').text());
+        const testF12 = parseFloat($('#testF12').text());
+        const testF1Diff = testF11 - testF12;
+        $('#testF1Diff').text(`(${testF1Diff.toFixed(2)})`).toggleClass('comparison-negative', testF1Diff < 0);
+
+        // Update comparison chart
+        updateComparisonChart();
+    }
+
+    // Fungsi untuk mengupdate chart perbandingan
+    function updateComparisonChart() {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+
+        // Create new chart
+        comparisonChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score'],
+                datasets: [
+                    {
+                        label: 'Simulasi 1',
+                        data: [
+                            parseFloat($('#trainAccuracy1').text()),
+                            parseFloat($('#trainPrecision1').text()),
+                            parseFloat($('#trainRecall1').text()),
+                            parseFloat($('#trainF11').text())
+                        ],
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Simulasi 2',
+                        data: [
+                            parseFloat($('#trainAccuracy2').text()),
+                            parseFloat($('#trainPrecision2').text()),
+                            parseFloat($('#trainRecall2').text()),
+                            parseFloat($('#trainF12').text())
+                        ],
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nilai'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Perbandingan Metrik Evaluasi'
+                    }
+                }
+            }
+        });
+    }
 </script>
 {% endblock %}

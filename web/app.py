@@ -400,6 +400,58 @@ def process():
         # Evaluasi manual untuk data uji
         test_evaluation = manual_evaluation_metrics(y_test, y_test_pred)
         
+        # Generate confusion matrix data
+        conf_matrix_train = confusion_matrix(y_train, y_train_pred)
+        conf_matrix_test = confusion_matrix(y_test, y_test_pred)
+        
+        # Create confusion matrix visualizations using Plotly
+        def create_confusion_matrix_figure(conf_matrix, title):
+            labels = ["Tidak Berprestasi", "Berprestasi"]
+            
+            # Calculate percentages for annotations
+            total = conf_matrix.sum()
+            percentages = conf_matrix / total * 100
+            
+            annotations = []
+            for i in range(len(labels)):
+                for j in range(len(labels)):
+                    annotations.append(
+                        dict(
+                            x=labels[j],
+                            y=labels[i],
+                            text=f"Count: {conf_matrix[i][j]}<br>({percentages[i][j]:.1f}%)",
+                            showarrow=False,
+                            font=dict(color='white' if conf_matrix[i][j] > conf_matrix.max()/2 else 'black')
+                        )
+                    )
+            
+            fig = go.Figure(data=go.Heatmap(
+                z=conf_matrix,
+                x=labels,
+                y=labels,
+                colorscale='Blues',
+                showscale=True
+            ))
+            
+            fig.update_layout(
+                title=dict(
+                    text=title,
+                    x=0.5,
+                    y=0.95
+                ),
+                annotations=annotations,
+                xaxis=dict(title="Predicted", side="bottom"),
+                yaxis=dict(title="Actual", side="left"),
+                width=500,
+                height=500,
+                margin=dict(t=100, l=100, r=50, b=100)
+            )
+            
+            return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        
+        conf_matrix_train_fig = create_confusion_matrix_figure(conf_matrix_train, "Confusion Matrix - Training Data")
+        conf_matrix_test_fig = create_confusion_matrix_figure(conf_matrix_test, "Confusion Matrix - Test Data")
+        
         # Mengembalikan hasil dalam bentuk JSON
         response = {
             "message": "Model berhasil dilatih, aturan diekstrak, visualisasi dibuat, dan dievaluasi.",
@@ -409,7 +461,15 @@ def process():
             "predictions": predictions,  # NIS, NAMA SISWA, dan Hasil Prediksi untuk data uji
             "evaluation": {
                 "train": train_evaluation,
-                "test": test_evaluation
+                "test": test_evaluation,
+                "confusion_matrix": {
+                    "train": conf_matrix_train.tolist(),
+                    "test": conf_matrix_test.tolist()
+                }
+            },
+            "confusion_matrix_plots": {
+                "train": conf_matrix_train_fig,
+                "test": conf_matrix_test_fig
             },
             "rules": rules,  # Aturan dalam format TRUE/FALSE
             "visualization": visualization_url,  # URL ke gambar pohon keputusan
